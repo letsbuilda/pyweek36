@@ -1,7 +1,12 @@
 repos:
+  - repo: https://github.com/psf/black
+    rev: 23.9.1
+    hooks:
+    - id: black
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
+      # some of these might be redundant now with the addition of black
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: check-toml
