@@ -19,7 +19,7 @@ Dark Matter periodically spreads to adjacent Solid Blocks (through both foregrou
 
 These mechanics are to be explored, with the following priority. Some might fall off or change slightly as we progress.
 
-1. The player has a point and shoot device which turns Dark Matter blocks into Solid-like blocks.
+1. The player has a point and shoot device which turns Dark Matter blocks in a small blast radius into Solid-like blocks.
     1. Turns Dark Matter blocks into regular Solid Blocks.
     2. Turns Dark Matter blocks into Solidified Dark Matter, a new block type which behaves like Solid Blocks but:
         1. Are immune to spread for a time, then go back to Solid Blocks which are once again succeptable to spread.
