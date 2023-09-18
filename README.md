@@ -56,6 +56,7 @@ High-level overview of steps to be taken, in order of four phases. As the roadma
     - Sprites enrichment.
 
 ### Phase 4
+- Creating binaries, installation and compatibility checks.
 - Bug hunting.
 - Last improvements.
 - Anything else that comes up during the other phases.
