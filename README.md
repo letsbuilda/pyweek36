@@ -1,17 +1,19 @@
 # pyweek36
 PyWeek 36
 
-
-
 # Mechanics
 
-Side-scrolling 2D platform game over a grid system. Each grid cell contains one of three types of blocks:
+Side-scrolling 2D platform game over a double grid system, with a foreground and a background (like Terraria).
+
+Each foreground grid cell contains one of three types of blocks:
 
 1. Air; the player can walk/fall through.
 2. Solid Block; the player collides with and thus can walk over, but not through.
 3. Dark Matter Block; behaves as Air.
 
-Dark Matter spreads to adjacent Solid Blocks, both opening and closing pathways as the time passes. It can also remove the floor from under the player's feet, and falling to the bottom of the map equals death. To win, the player has to reach the end of the map, either the top or the extreme right side (without dying).
+Similarly, the background will have the same above three block types, though none of them can be interacted with directly.
+
+Dark Matter periodically spreads to adjacent Solid Blocks (through both foreground and background grids). This both opens and closes pathways as the time passes. It can also remove the floor from under the player's feet, and falling to the bottom of the map equals death. To win, the player has to reach the end of the map (either the top or the extreme right side, to be decided) without dying.
 
 ## Additional Mechanics
 
@@ -29,11 +31,11 @@ These mechanics are to be explored, with the following priority. Some might fall
 High-level overview of steps to be taken, in order of four phases. As the roadmap progresses, the potential for paralel contributions is expected to increase.
 
 ### Phase 1
-- Project structuring and boilerplates.
+- Project structuring, boilerplates and any initial setups.
 - From [Basic mechanics](#mechanics).
     - Block types and Player entities.
     - Rendering (any sprites are acceptable, just so that we can see what we're working with).
-    - Character Movement and Colision.
+    - Physics, Character Movement and Colision.
 - Conceptual Art & Writing discussions.
 
 ### Phase 2
@@ -43,11 +45,11 @@ High-level overview of steps to be taken, in order of four phases. As the roadma
 - [Additional Mechanics](#additional-mechanics).
 - Paradigm or tool for level creation.
 - Art & Writing:
-    - Sprites.
+    - Sprites and Tileset.
     - Home and Level Selection screen mockups (and/or any other required screens).
 
 ### Phase 3
-- Handcrafting of levels.
+- Handcrafting of levels (tilemaps).
 - Screens implementation:
     - Home screen.
     - Level Selection screen.
