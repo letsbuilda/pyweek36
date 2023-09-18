@@ -11,7 +11,9 @@ Side-scrolling 2D platform game over a grid system. Each grid cell contains one 
 2. Solid Block; the player collides with and thus can walk over, but not through.
 3. Dark Matter Block; usually behaves as Air.
 
-The player has to reach the end of the map, either the top or the extreme right side (without dying).
+To win, the player has to reach the end of the map, either the top or the extreme right side (without dying).
+
+Each level is composed of a map built with the above 3 block types and a set of the following additional mechanics.
 
 ## Additional Mechanics
 
