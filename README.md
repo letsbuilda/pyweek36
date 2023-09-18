@@ -17,7 +17,7 @@ Each level is composed of a map built with the above 3 block types and a set of 
 
 ## Additional Mechanics
 
-These mechanics are to be explored. Some might fall off or change slightly as we progress. 
+These mechanics are to be explored. Some might fall off or change slightly as we progress.
 
 1. Dark Matter spreads to adjacent Solid Blocks, both opening and closing pathways as the time passes. It can also remove the floor from under the player's feet, and falling to the bottom of the map equals death.
 2. The player has a device which allows him to interact with Dark Matter blocks as if they were Solid Blocks, effectively toggling the behavior of all Dark Matter blocks at the map when turned on.
@@ -59,4 +59,3 @@ High-level overview of steps to be taken, in order of four phases. As the roadma
 - Bug hunting.
 - Last improvements.
 - Anything else that comes up during the other phases.
-
