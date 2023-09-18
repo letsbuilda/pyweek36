@@ -24,6 +24,7 @@ These mechanics are to be explored, with the following priority. Some might fall
     1. Turns Dark Matter blocks into Solid Blocks.
     2. Turns Dark Matter blocks into Solidified Dark Matter, which behaves like Solid Blocks but goes back into being regular Dark Matter after a time.
     3. A fourth block type, Dark Matter Source, is added as a Dark Matter block immune to conversion.
+        * Can facilitate the design of levels where the player is not able to erradicate the Dark Matter.
     4. Can also turn Solid Blocks into Dark Matter (might [be incoherent](https://github.com/letsbuilda/pyweek36/pull/12/files#r1328208664)).
 3. The player has a device which allows him to interact with Dark Matter blocks as if they were Solid Blocks, effectively toggling the behavior of all Dark Matter blocks at the map when turned on.
     1. The device overheats after a fixed time being used, making it go into cooldown. The player has to control how much it uses it.
