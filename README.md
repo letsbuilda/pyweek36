@@ -23,7 +23,7 @@ These mechanics are to be explored, with the following priority. Some might fall
     1. Turns Dark Matter blocks into regular Solid Blocks.
     2. Turns Dark Matter blocks into Solidified Dark Matter, a new block type which behaves like Solid Blocks but:
         1. Are immune to spread for a time, then go back to Solid Blocks which are once again succeptable to spread.
-        2. Goes back into being regular Dark Matter after a time, higher than the frequency of spread. Effectively works as 2.1 initially, but then all of the blocks affected by a single shot would go back to Dark Matter at the same time, rather than allowing the spread to gradually take them over again.
+        2. Goes back into being regular Dark Matter after a time, higher than the frequency of spread. Effectively works as ii.a initially, but then all of the blocks affected by a single shot would go back to Dark Matter at the same time, rather than allowing the spread to gradually take them over again.
     3. A fourth block type, Dark Matter Source, is added as a Dark Matter block immune to conversion.
         * Can facilitate the design of levels so that the player is not ever able to erradicate the Dark Matter (and thus completely stop spread, along with any loss condition).
     4. Can also turn Solid Blocks into Dark Matter (might [be incoherent](https://github.com/letsbuilda/pyweek36/pull/12/files#r1328208664), low priority).
