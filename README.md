@@ -42,16 +42,21 @@ High-level overview of steps to be taken, in order of four phases. As the roadma
 - Paradigm or tool for level creation.
 - Art & Writing.
     - Sprites.
-    - Music/Sounds.
     - Home and Level Selection screen mockups (and/or any other required screens).
-    - Backstory & Dialog writeup.
 
 ### Phase 3
-- Home screen implementation.
-- Level Selection screen implementation.
 - Handcrafting of levels.
+- Screen implementation.
+    - Home screen.
+    - Level Selection screen.
+    - Any others as per Phase 2's mockups.
+- Art & Writing.
+    - Music/Sounds.
+    - Backstory & Dialog writeup.
+    - Sprites enrichment.
 
 ### Phase 4
 - Bug hunting.
 - Last improvements.
+- Anything else that comes up during the other phases.
 
