@@ -5,7 +5,7 @@ from .constants import (
     SCREEN_TITLE,
     SCREEN_WIDTH,
     PLAYER_MOVE_FORCE_ON_GROUND,
-    PLAYER_JUMP_IMPULSE
+    PLAYER_JUMP_IMPULSE,
 )
 from sprites import PlayerSprite
 from typing import Optional
