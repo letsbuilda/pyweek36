@@ -22,11 +22,8 @@ class GameWindow(arcade.Window):
         self.player_sprite: Optional[PlayerSprite] = None
 
         self.player_list: Optional[arcade.SpriteList] = None
-        self.wall_list: Optional[arcade.SpriteList] = None
+        self.block_list: Optional[arcade.SpriteList] = None
         self.bullet_list: Optional[arcade.SpriteList] = None
-        self.item_list: Optional[arcade.SpriteList] = None
-        self.moving_sprites_list: Optional[arcade.SpriteList] = None
-        self.ladder_list: Optional[arcade.SpriteList] = None
 
         # Track the current state of what key is pressed
         self.left_pressed: bool = False
@@ -44,19 +41,17 @@ class GameWindow(arcade.Window):
         self.player_list = arcade.SpriteList()
         self.bullet_list = arcade.SpriteList()
 
-        map_name = ":resources:/tiled_maps/pymunk_test_map.json"
+        map_path = ASSETS_DIR / "tiled" / "map.tmx"
+        map_name = str(map_path.resolve())
 
-        tile_map = arcade.load_tilemap(map_name, SPRITE_SCALING_TILES)
+        tile_map = arcade.tilemap.TileMap(
+            map_name, SPRITE_SCALING_TILES, hit_box_algorithm="Detailed"
+        )
 
         # Pull the sprite layers out of the tile map
-        self.wall_list = tile_map.sprite_lists["Platforms"]
-        self.item_list = tile_map.sprite_lists["Dynamic Items"]
-        self.ladder_list = tile_map.sprite_lists["Ladders"]
-        self.moving_sprites_list = tile_map.sprite_lists["Moving Platforms"]
+        self.block_list = tile_map.sprite_lists["Map"]
 
-        self.player_sprite = PlayerSprite(
-            self.ladder_list, hit_box_algorithm="Detailed"
-        )
+        self.player_sprite = PlayerSprite(hit_box_algorithm="Detailed")
 
         # Set player location
         grid_x = 1
@@ -81,15 +76,6 @@ class GameWindow(arcade.Window):
             "bullet", "wall", post_handler=wall_hit_handler
         )
 
-        def item_hit_handler(bullet_sprite, item_sprite, _arbiter, _space, _data):
-            """Called for bullet/wall collision"""
-            bullet_sprite.remove_from_sprite_lists()
-            item_sprite.remove_from_sprite_lists()
-
-        self.physics_engine.add_collision_handler(
-            "bullet", "item", post_handler=item_hit_handler
-        )
-
         self.physics_engine.add_sprite(
             self.player_sprite,
             friction=PLAYER_FRICTION,
@@ -101,20 +87,10 @@ class GameWindow(arcade.Window):
         )
 
         self.physics_engine.add_sprite_list(
-            self.wall_list,
+            self.block_list,
             friction=WALL_FRICTION,
             collision_type="wall",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
-        )
-
-        # Create the items
-        self.physics_engine.add_sprite_list(
-            self.item_list, friction=DYNAMIC_ITEM_FRICTION, collision_type="item"
-        )
-
-        # Add kinematic sprites
-        self.physics_engine.add_sprite_list(
-            self.moving_sprites_list, body_type=arcade.PymunkPhysicsEngine.KINEMATIC
         )
 
     def on_key_press(self, key, modifiers):
@@ -128,10 +104,7 @@ class GameWindow(arcade.Window):
         elif key in (k.UP, k.W, k.SPACE):
             self.up_pressed = True
             # find out if player is standing on ground, and not on a ladder
-            if (
-                self.physics_engine.is_on_ground(self.player_sprite)
-                and not self.player_sprite.is_on_ladder
-            ):
+            if self.physics_engine.is_on_ground(self.player_sprite):
                 # Jump
                 impulse = (0, PLAYER_JUMP_IMPULSE)
                 self.physics_engine.apply_impulse(self.player_sprite, impulse)
@@ -207,92 +180,26 @@ class GameWindow(arcade.Window):
         """Movement and game logic"""
 
         is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
-        # Update player forces based on keys pressed
-        if self.left_pressed and not self.right_pressed:
-            # Create a force to the left. Apply it.
-            if is_on_ground or self.player_sprite.is_on_ladder:
-                force = (-PLAYER_MOVE_FORCE_ON_GROUND, 0)
+        # Update player
+        self.physics_engine.set_friction(self.player_sprite, PLAYER_FRICTION)
+        x_movement = self.right_pressed - self.left_pressed
+        if x_movement:
+            if is_on_ground:
+                x_force = PLAYER_MOVE_FORCE_ON_GROUND
             else:
-                force = (-PLAYER_MOVE_FORCE_IN_AIR, 0)
-            self.physics_engine.apply_force(self.player_sprite, force)
-            # Set friction to zero for the player while moving
+                x_force = PLAYER_MOVE_FORCE_IN_AIR
+            x_force *= x_movement
+            self.physics_engine.apply_force(self.player_sprite, (x_force, 0))
             self.physics_engine.set_friction(self.player_sprite, 0)
-        elif self.right_pressed and not self.left_pressed:
-            # Create a force to the right. Apply it.
-            if is_on_ground or self.player_sprite.is_on_ladder:
-                force = (PLAYER_MOVE_FORCE_ON_GROUND, 0)
-            else:
-                force = (PLAYER_MOVE_FORCE_IN_AIR, 0)
-            self.physics_engine.apply_force(self.player_sprite, force)
-            # Set friction to zero for the player while moving
-            self.physics_engine.set_friction(self.player_sprite, 0)
-        elif self.up_pressed and not self.down_pressed:
-            # Create a force to the right. Apply it.
-            if self.player_sprite.is_on_ladder:
-                force = (0, PLAYER_MOVE_FORCE_ON_GROUND)
-                self.physics_engine.apply_force(self.player_sprite, force)
-                # Set friction to zero for the player while moving
-                self.physics_engine.set_friction(self.player_sprite, 0)
-        elif self.down_pressed and not self.up_pressed:
-            # Create a force to the right. Apply it.
-            if self.player_sprite.is_on_ladder:
-                force = (0, -PLAYER_MOVE_FORCE_ON_GROUND)
-                self.physics_engine.apply_force(self.player_sprite, force)
-                # Set friction to zero for the player while moving
-                self.physics_engine.set_friction(self.player_sprite, 0)
-
-        else:
-            # Player's feet are not moving. Therefore up the friction so we stop.
-            self.physics_engine.set_friction(self.player_sprite, 1.0)
 
         # Move items in the physics engine
         self.physics_engine.step()
 
-        # For each moving sprite, see if we've reached a boundary and need to
-        # reverse course.
-        for moving_sprite in self.moving_sprites_list:
-            if (
-                moving_sprite.boundary_right
-                and moving_sprite.change_x > 0
-                and moving_sprite.right > moving_sprite.boundary_right
-            ):
-                moving_sprite.change_x *= -1
-            elif (
-                moving_sprite.boundary_left
-                and moving_sprite.change_x < 0
-                and moving_sprite.left > moving_sprite.boundary_left
-            ):
-                moving_sprite.change_x *= -1
-            if (
-                moving_sprite.boundary_top
-                and moving_sprite.change_y > 0
-                and moving_sprite.top > moving_sprite.boundary_top
-            ):
-                moving_sprite.change_y *= -1
-            elif (
-                moving_sprite.boundary_bottom
-                and moving_sprite.change_y < 0
-                and moving_sprite.bottom < moving_sprite.boundary_bottom
-            ):
-                moving_sprite.change_y *= -1
-
-            # Figure out and set our moving platform velocity.
-            # Pymunk uses velocity is in pixels per second. If we instead have
-            # pixels per frame, we need to convert.
-            velocity = (
-                moving_sprite.change_x * 1 / delta_time,
-                moving_sprite.change_y * 1 / delta_time,
-            )
-            self.physics_engine.set_velocity(moving_sprite, velocity)
-
     def on_draw(self):
         """Draw everything"""
         self.clear()
-        self.wall_list.draw()
-        self.ladder_list.draw()
-        self.moving_sprites_list.draw()
+        self.block_list.draw()
         self.bullet_list.draw()
-        self.item_list.draw()
         self.player_list.draw()
 
 

@@ -1,11 +1,15 @@
+from pathlib import Path
+
+ASSETS_DIR = Path(__file__).parent.parent / "assets"
+
 SCREEN_TITLE = "PyMunk Platformer"
 
 # How big are our image tiles?
-SPRITE_IMAGE_SIZE = 128
+SPRITE_IMAGE_SIZE = 64
 
 # Scale sprites up or down
-SPRITE_SCALING_PLAYER = 0.5
-SPRITE_SCALING_TILES = 0.5
+SPRITE_SCALING_PLAYER = 1
+SPRITE_SCALING_TILES = 1
 
 # Scaled sprite size for tiles
 SPRITE_SIZE = int(SPRITE_IMAGE_SIZE * SPRITE_SCALING_PLAYER)
@@ -25,10 +29,10 @@ GRAVITY = 1500
 
 # Damping - Amount of speed lost per second
 DEFAULT_DAMPING = 1.0
-PLAYER_DAMPING = 0.4
+PLAYER_DAMPING = 2
 
 # Friction between objects
-PLAYER_FRICTION = 1.0
+PLAYER_FRICTION = 2
 WALL_FRICTION = 0.7
 DYNAMIC_ITEM_FRICTION = 0.6
 
@@ -36,17 +40,17 @@ DYNAMIC_ITEM_FRICTION = 0.6
 PLAYER_MASS = 2.0
 
 # Keep player from going too fast
-PLAYER_MAX_HORIZONTAL_SPEED = 450
-PLAYER_MAX_VERTICAL_SPEED = 1600
+PLAYER_MAX_HORIZONTAL_SPEED = 350
+PLAYER_MAX_VERTICAL_SPEED = 700
 
 # Force applied while on the ground
-PLAYER_MOVE_FORCE_ON_GROUND = 8000
+PLAYER_MOVE_FORCE_ON_GROUND = 6000
 
 # Force applied when moving left/right in the air
-PLAYER_MOVE_FORCE_IN_AIR = 900
+PLAYER_MOVE_FORCE_IN_AIR = 2000
 
 # Strength of a jump
-PLAYER_JUMP_IMPULSE = 1800
+PLAYER_JUMP_IMPULSE = 1200
 
 # Close enough to not-moving to have the animation go to idle.
 DEAD_ZONE = 0.1
