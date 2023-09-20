@@ -29,10 +29,10 @@ GRAVITY = 1500
 
 # Damping - Amount of speed lost per second
 DEFAULT_DAMPING = 1.0
-PLAYER_DAMPING = 0.4
+PLAYER_DAMPING = 2
 
 # Friction between objects
-PLAYER_FRICTION = 1.0
+PLAYER_FRICTION = 2
 WALL_FRICTION = 0.7
 DYNAMIC_ITEM_FRICTION = 0.6
 
@@ -40,17 +40,17 @@ DYNAMIC_ITEM_FRICTION = 0.6
 PLAYER_MASS = 2.0
 
 # Keep player from going too fast
-PLAYER_MAX_HORIZONTAL_SPEED = 450
-PLAYER_MAX_VERTICAL_SPEED = 1600
+PLAYER_MAX_HORIZONTAL_SPEED = 350
+PLAYER_MAX_VERTICAL_SPEED = 700
 
 # Force applied while on the ground
-PLAYER_MOVE_FORCE_ON_GROUND = 8000
+PLAYER_MOVE_FORCE_ON_GROUND = 6000
 
 # Force applied when moving left/right in the air
-PLAYER_MOVE_FORCE_IN_AIR = 900
+PLAYER_MOVE_FORCE_IN_AIR = 2000
 
 # Strength of a jump
-PLAYER_JUMP_IMPULSE = 1800
+PLAYER_JUMP_IMPULSE = 1200
 
 # Close enough to not-moving to have the animation go to idle.
 DEAD_ZONE = 0.1
