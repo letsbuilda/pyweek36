@@ -180,29 +180,17 @@ class GameWindow(arcade.Window):
         """Movement and game logic"""
 
         is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
-        # Update player forces based on keys pressed
-        if self.left_pressed and not self.right_pressed:
-            # Create a force to the left. Apply it.
+        # Update player
+        self.physics_engine.set_friction(self.player_sprite, PLAYER_FRICTION)
+        x_movement = self.right_pressed - self.left_pressed
+        if x_movement:
             if is_on_ground:
-                force = (-PLAYER_MOVE_FORCE_ON_GROUND, 0)
+                x_force = PLAYER_MOVE_FORCE_ON_GROUND
             else:
-                force = (-PLAYER_MOVE_FORCE_IN_AIR, 0)
-            self.physics_engine.apply_force(self.player_sprite, force)
-            # Set friction to zero for the player while moving
+                x_force = PLAYER_MOVE_FORCE_IN_AIR
+            x_force *= x_movement
+            self.physics_engine.apply_force(self.player_sprite, (x_force, 0))
             self.physics_engine.set_friction(self.player_sprite, 0)
-        elif self.right_pressed and not self.left_pressed:
-            # Create a force to the right. Apply it.
-            if is_on_ground:
-                force = (PLAYER_MOVE_FORCE_ON_GROUND, 0)
-            else:
-                force = (PLAYER_MOVE_FORCE_IN_AIR, 0)
-            self.physics_engine.apply_force(self.player_sprite, force)
-            # Set friction to zero for the player while moving
-            self.physics_engine.set_friction(self.player_sprite, 0)
-
-        else:
-            # Player's feet are not moving. Therefore up the friction so we stop.
-            self.physics_engine.set_friction(self.player_sprite, 1.0)
 
         # Move items in the physics engine
         self.physics_engine.step()
