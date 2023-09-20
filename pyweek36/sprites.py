@@ -6,7 +6,7 @@ from .constants import *
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
 
-    def __init__(self, ladder_list: arcade.SpriteList, hit_box_algorithm):
+    def __init__(self, hit_box_algorithm):
         """Init"""
         # Let parent initialize
         super().__init__()
@@ -16,12 +16,7 @@ class PlayerSprite(arcade.Sprite):
 
         # Images from Kenney.nl's Character pack
         # main_path = ":resources:images/animated_characters/female_adventurer/femaleAdventurer"
-        main_path = ":resources:images/animated_characters/female_person/femalePerson"
-        # main_path = ":resources:images/animated_characters/male_person/malePerson"
-        # main_path = ":resources:images/animated_characters/male_adventurer/maleAdventurer"
-        # main_path = ":resources:images/animated_characters/zombie/zombie"
-        # main_path = ":resources:images/animated_characters/robot/robot"
-
+        main_path = ASSETS_DIR / "sprites" / "player" / "player"
         # Load textures for idle standing
         self.idle_texture_pair = arcade.load_texture_pair(
             f"{main_path}_idle.png", hit_box_algorithm=hit_box_algorithm
@@ -31,16 +26,10 @@ class PlayerSprite(arcade.Sprite):
 
         # Load textures for walking
         self.walk_textures = []
-        for i in range(8):
+        frames = 8
+        for i in range(frames):
             texture = arcade.load_texture_pair(f"{main_path}_walk{i}.png")
             self.walk_textures.append(texture)
-
-        # Load textures for climbing
-        self.climbing_textures = []
-        texture = arcade.load_texture(f"{main_path}_climb0.png")
-        self.climbing_textures.append(texture)
-        texture = arcade.load_texture(f"{main_path}_climb1.png")
-        self.climbing_textures.append(texture)
 
         # Set the initial texture
         self.texture = self.idle_texture_pair[0]
@@ -58,9 +47,6 @@ class PlayerSprite(arcade.Sprite):
         self.x_odometer = 0
         self.y_odometer = 0
 
-        self.ladder_list = ladder_list
-        self.is_on_ladder = False
-
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """Handle being moved by the pymunk engine"""
         # Figure out if we need to face left or right
@@ -72,37 +58,9 @@ class PlayerSprite(arcade.Sprite):
         # Are we on the ground?
         is_on_ground = physics_engine.is_on_ground(self)
 
-        # Are we on a ladder?
-        if len(arcade.check_for_collision_with_list(self, self.ladder_list)) > 0:
-            if not self.is_on_ladder:
-                self.is_on_ladder = True
-                self.pymunk.gravity = (0, 0)
-                self.pymunk.damping = 0.0001
-                self.pymunk.max_vertical_velocity = PLAYER_MAX_HORIZONTAL_SPEED
-        else:
-            if self.is_on_ladder:
-                self.pymunk.damping = 1.0
-                self.pymunk.max_vertical_velocity = PLAYER_MAX_VERTICAL_SPEED
-                self.is_on_ladder = False
-                self.pymunk.gravity = None
-
         # Add to the odometer how far we've moved
         self.x_odometer += dx
         self.y_odometer += dy
-
-        if self.is_on_ladder and not is_on_ground:
-            # Have we moved far enough to change the texture?
-            if abs(self.y_odometer) > DISTANCE_TO_CHANGE_TEXTURE:
-                # Reset the odometer
-                self.y_odometer = 0
-
-                # Advance the walking animation
-                self.cur_texture += 1
-
-            if self.cur_texture > 1:
-                self.cur_texture = 0
-            self.texture = self.climbing_textures[self.cur_texture]
-            return
 
         # Jumping animation
         if not is_on_ground:

@@ -1,3 +1,7 @@
+from pathlib import Path
+
+ASSETS_DIR = Path(__file__).parent.parent / "assets"
+
 SCREEN_TITLE = "PyMunk Platformer"
 
 # How big are our image tiles?
