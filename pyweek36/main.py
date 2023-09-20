@@ -6,6 +6,7 @@ import math
 from typing import Optional
 
 import arcade
+from arcade import SpriteList, PymunkPhysicsEngine
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -19,11 +20,9 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title)
 
-        self.player_sprite: Optional[PlayerSprite] = None
-
-        self.player_list: Optional[arcade.SpriteList] = None
-        self.block_list: Optional[arcade.SpriteList] = None
-        self.bullet_list: Optional[arcade.SpriteList] = None
+        self.player_sprite: PlayerSprite = PlayerSprite()
+        self.block_list: SpriteList = SpriteList()
+        self.bullet_list: SpriteList = SpriteList()
 
         # Track the current state of what key is pressed
         self.left_pressed: bool = False
@@ -31,51 +30,27 @@ class GameWindow(arcade.Window):
         self.up_pressed: bool = False
         self.down_pressed: bool = False
 
-        self.physics_engine: Optional[arcade.PymunkPhysicsEngine] = None
+        self.physics_engine: PymunkPhysicsEngine | None = None
 
-        arcade.set_background_color(arcade.color.AMAZON)
-
-    def setup(self):
-        """Set up everything with the game"""
-
-        self.player_list = arcade.SpriteList()
-        self.bullet_list = arcade.SpriteList()
-
-        map_path = ASSETS_DIR / "tiled" / "map.tmx"
-        map_name = str(map_path.resolve())
-
+    def load_tilemap(self, map_name):
         tile_map = arcade.tilemap.TileMap(
-            map_name, SPRITE_SCALING_TILES, hit_box_algorithm="Detailed"
+            ASSETS_DIR / "tiled" / map_name,
+            SPRITE_SCALING_TILES,
+            hit_box_algorithm="Detailed",
         )
 
-        # Pull the sprite layers out of the tile map
-        self.block_list = tile_map.sprite_lists["Map"]
+        self.physics_engine = PymunkPhysicsEngine(
+            damping=DEFAULT_DAMPING,
+            gravity=(0, -GRAVITY),
+        )
 
-        self.player_sprite = PlayerSprite(hit_box_algorithm="Detailed")
-
-        # Set player location
+        # Player sprite
         grid_x = 1
         grid_y = 1
-        self.player_sprite.center_x = SPRITE_SIZE * grid_x + SPRITE_SIZE / 2
-        self.player_sprite.center_y = SPRITE_SIZE * grid_y + SPRITE_SIZE / 2
-        self.player_list.append(self.player_sprite)
-
-        damping = DEFAULT_DAMPING
-
-        gravity = (0, -GRAVITY)
-
-        self.physics_engine = arcade.PymunkPhysicsEngine(
-            damping=damping, gravity=gravity
+        self.player_sprite.position = (
+            SPRITE_SIZE * (grid_x + 0.5),
+            SPRITE_SIZE * (grid_y + 0.5),
         )
-
-        def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
-            """Called for bullet/wall collision"""
-            bullet_sprite.remove_from_sprite_lists()
-
-        self.physics_engine.add_collision_handler(
-            "bullet", "wall", post_handler=wall_hit_handler
-        )
-
         self.physics_engine.add_sprite(
             self.player_sprite,
             friction=PLAYER_FRICTION,
@@ -86,12 +61,32 @@ class GameWindow(arcade.Window):
             max_vertical_velocity=PLAYER_MAX_VERTICAL_SPEED,
         )
 
+        # Walls
+        self.block_list = tile_map.sprite_lists["Map"]
         self.physics_engine.add_sprite_list(
             self.block_list,
             friction=WALL_FRICTION,
             collision_type="wall",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
+
+        # Bullets
+        self.bullet_list.clear()
+
+        def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
+            """Called for bullet/wall collision"""
+            bullet_sprite.remove_from_sprite_lists()
+
+        self.physics_engine.add_collision_handler(
+            "bullet", "wall", post_handler=wall_hit_handler
+        )
+
+    def setup(self):
+        """Set up everything with the game"""
+
+        arcade.set_background_color(arcade.color.AMAZON)
+
+        self.load_tilemap("map.tmx")
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -131,50 +126,24 @@ class GameWindow(arcade.Window):
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
-        start_x = self.player_sprite.center_x
-        start_y = self.player_sprite.center_y
-        bullet.position = self.player_sprite.position
+        start_x, start_y = bullet.position = self.player_sprite.position
 
-        # Get from the mouse the destination location for the bullet
-        # IMPORTANT! If you have a scrolling screen, you will also need
-        # to add in self.view_bottom and self.view_left.
-        dest_x = x
-        dest_y = y
-
-        # Do math to calculate how to get the bullet to the destination.
-        # Calculation the angle in radians between the start points
-        # and end points. This is the angle the bullet will travel.
-        x_diff = dest_x - start_x
-        y_diff = dest_y - start_y
-        angle = math.atan2(y_diff, x_diff)
-
-        # What is the 1/2 size of this sprite, so we can figure out how far
-        # away to spawn the bullet
-        size = max(self.player_sprite.width, self.player_sprite.height) / 2
-
-        # Use angle to to spawn bullet away from player in proper direction
-        bullet.center_x += size * math.cos(angle)
-        bullet.center_y += size * math.sin(angle)
-
-        # Set angle of bullet
+        # NOTE: Add self.view_bottom and self.view_left if scrolling
+        angle = math.atan2(y - start_y, x - start_x)
         bullet.angle = math.degrees(angle)
 
-        bullet_gravity = (0, -BULLET_GRAVITY)
-
-        # Add the sprite. This needs to be done AFTER setting the fields above.
         self.physics_engine.add_sprite(
             bullet,
             mass=BULLET_MASS,
             damping=1.0,
             friction=0.6,
             collision_type="bullet",
-            gravity=bullet_gravity,
+            gravity=(0, -BULLET_GRAVITY),
             elasticity=0.9,
         )
 
         # Add force to bullet
-        force = (BULLET_MOVE_FORCE, 0)
-        self.physics_engine.apply_force(bullet, force)
+        self.physics_engine.apply_force(bullet, (BULLET_MOVE_FORCE, 0))
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -200,7 +169,8 @@ class GameWindow(arcade.Window):
         self.clear()
         self.block_list.draw()
         self.bullet_list.draw()
-        self.player_list.draw()
+        self.player_sprite.draw()
+        # self.player_sprite.draw_hit_boxes(color=arcade.color.RED, line_thickness=5)
 
 
 def main():
