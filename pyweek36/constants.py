@@ -5,11 +5,11 @@ ASSETS_DIR = Path(__file__).parent.parent / "assets"
 SCREEN_TITLE = "PyMunk Platformer"
 
 # How big are our image tiles?
-SPRITE_IMAGE_SIZE = 128
+SPRITE_IMAGE_SIZE = 64
 
 # Scale sprites up or down
-SPRITE_SCALING_PLAYER = 0.5
-SPRITE_SCALING_TILES = 0.5
+SPRITE_SCALING_PLAYER = 1
+SPRITE_SCALING_TILES = 1
 
 # Scaled sprite size for tiles
 SPRITE_SIZE = int(SPRITE_IMAGE_SIZE * SPRITE_SCALING_PLAYER)
