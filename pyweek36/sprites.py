@@ -23,6 +23,7 @@ class PlayerSprite(arcade.Sprite):
         self.cur_texture = 0
         self.x_odometer = 0
         self.y_odometer = 0
+        self.last_on_ground = -1
 
         # Load textures
         main_path = ASSETS_DIR / "sprites" / "player" / "player"
@@ -36,15 +37,23 @@ class PlayerSprite(arcade.Sprite):
 
     def on_update(self, delta_time: float = 1 / 60):
         engine = self.game.physics_engine
+        on_ground = engine.is_on_ground(self)
+        if on_ground:
+            self.last_on_ground = self.game.global_time
 
         right_pressed = InputType.RIGHT in self.game.pressed_keys
         left_pressed = InputType.LEFT in self.game.pressed_keys
         target_vel = (right_pressed - left_pressed) * PLAYER_HORIZONTAL_SPEED
         accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
-        if not engine.is_on_ground(self):
+        if not on_ground:
             accel *= PLAYER_AIR_ACCEL_FACTOR
         vel_diff = target_vel - self.velocity[0]
         engine.apply_force(self, (vel_diff * accel, 0))
+
+        if (self.game.is_buffered(InputType.UP)
+                and self.last_on_ground + COYOTE_DURATION > self.game.global_time):
+            engine.apply_impulse(self, (0, PLAYER_JUMP_IMPULSE))
+            self.last_on_ground = -1
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """Handle being moved by the pymunk engine"""
