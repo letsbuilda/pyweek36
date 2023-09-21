@@ -36,25 +36,20 @@ class PlayerSprite(arcade.Sprite):
 
     def on_update(self, delta_time: float = 1 / 60):
         engine = self.game.physics_engine
-        is_on_ground = engine.is_on_ground(self)
-        # Update player
-        engine.set_friction(self, PLAYER_FRICTION)
-        x_movement = self.game.right_pressed - self.game.left_pressed
-        delta_x_vel = x_movement * PLAYER_MAX_HORIZONTAL_SPEED - self.velocity[0]
-        if x_movement:
-            if is_on_ground:
-                x_force = PLAYER_MOVE_FORCE_ON_GROUND
-            else:
-                x_force = PLAYER_MOVE_FORCE_IN_AIR
-            x_force *= x_movement
-            engine.apply_force(self, (delta_x_vel, 0))
-            engine.set_friction(self, 0)
+
+        target_vel = (self.game.right_pressed - self.game.left_pressed) * PLAYER_HORIZONTAL_SPEED
+        accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
+        if not engine.is_on_ground(self):
+            accel *= PLAYER_AIR_ACCEL_FACTOR
+        vel_diff = target_vel - self.velocity[0]
+        engine.apply_force(self, (vel_diff * accel, 0))
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """Handle being moved by the pymunk engine"""
 
         self.x_odometer += dx
         self.y_odometer += dy
+        self.velocity = [dx * 60, dy * 60]
 
         # Figure out if we need to face left or right
         if dx < -DEAD_ZONE and self.facing_direction == RIGHT_FACING:

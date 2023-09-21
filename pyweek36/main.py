@@ -47,7 +47,7 @@ class GameWindow(arcade.Window):
 
         # Player sprite
         grid_x = 1
-        grid_y = 1
+        grid_y = 3
         self.player_sprite.position = (
             SPRITE_SIZE * (grid_x + 0.5),
             SPRITE_SIZE * (grid_y + 0.5),
@@ -56,10 +56,9 @@ class GameWindow(arcade.Window):
             self.player_sprite,
             friction=PLAYER_FRICTION,
             mass=PLAYER_MASS,
+            damping=PLAYER_DAMPING,
             moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
             collision_type="player",
-            max_horizontal_velocity=PLAYER_MAX_HORIZONTAL_SPEED,
-            max_vertical_velocity=PLAYER_MAX_VERTICAL_SPEED,
         )
 
         # Walls
