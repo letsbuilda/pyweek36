@@ -25,12 +25,14 @@ class GameWindow(arcade.Window):
 
         self.global_time: float = 0
         self.last_pressed: dict[int, float] = {}
-        self.last_released: dict[int, float] = {}
-        self.left_pressed: bool = False
-        self.right_pressed: bool = False
-        self.up_pressed: bool = False
-        self.down_pressed: bool = False
-
+        self.pressed_keys: set[int] = set()
+        k = arcade.key
+        self.control_map: dict[int, InputType] = (
+            dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
+            | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
+            | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
+            | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
+        )
         self.physics_engine: PymunkPhysicsEngine | None = None
 
     def load_tilemap(self, map_name):
@@ -90,34 +92,24 @@ class GameWindow(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
-
-        k = arcade.key
-        if key in (k.LEFT, k.A):
-            self.left_pressed = True
-        elif key in (k.RIGHT, k.D):
-            self.right_pressed = True
-        elif key in (k.UP, k.W, k.SPACE):
-            self.up_pressed = True
-            # find out if player is standing on ground, and not on a ladder
-            if self.physics_engine.is_on_ground(self.player_sprite):
-                # Jump
-                impulse = (0, PLAYER_JUMP_IMPULSE)
-                self.physics_engine.apply_impulse(self.player_sprite, impulse)
-        elif key in (k.DOWN, k.S):
-            self.down_pressed = True
+        if (type_ := self.control_map.get(key)) is None:
+            return
+        self.last_pressed[type_] = self.global_time
+        self.pressed_keys.add(type_)
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key."""
+        """Called whenever a key is released."""
+        if (type_ := self.control_map.get(key)) is None:
+            return
+        self.pressed_keys.remove(type_)
 
-        k = arcade.key
-        if key in (k.LEFT, k.A):
-            self.left_pressed = False
-        elif key in (k.RIGHT, k.D):
-            self.right_pressed = False
-        elif key in (k.UP, k.W, k.SPACE):
-            self.up_pressed = False
-        elif key in (k.DOWN, k.S):
-            self.down_pressed = False
+    def is_buffered(self, key, consume_input=True):
+        if self.last_pressed.get(key, -1) + INPUT_BUFFER_DURATION > self.global_time:
+            if consume_input:
+                self.last_pressed[key] = -1
+            return True
+        else:
+            return False
 
     def on_mouse_press(self, x, y, button, modifiers):
         """Called whenever the mouse button is clicked."""

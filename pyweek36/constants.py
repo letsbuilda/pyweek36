@@ -1,3 +1,4 @@
+from enum import IntEnum
 from pathlib import Path
 
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
@@ -23,6 +24,18 @@ SCREEN_HEIGHT = SPRITE_SIZE * SCREEN_GRID_HEIGHT
 GRAVITY = 2500
 DEFAULT_DAMPING = 1.0
 WALL_FRICTION = 0.0
+
+
+# Controls
+class InputType(IntEnum):
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+
+
+INPUT_BUFFER_DURATION = 0.25
+COYOTE_DURATION = 0.25
 
 # Player
 PLAYER_MASS = 20

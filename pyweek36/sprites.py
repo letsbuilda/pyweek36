@@ -37,7 +37,9 @@ class PlayerSprite(arcade.Sprite):
     def on_update(self, delta_time: float = 1 / 60):
         engine = self.game.physics_engine
 
-        target_vel = (self.game.right_pressed - self.game.left_pressed) * PLAYER_HORIZONTAL_SPEED
+        right_pressed = InputType.RIGHT in self.game.pressed_keys
+        left_pressed = InputType.LEFT in self.game.pressed_keys
+        target_vel = (right_pressed - left_pressed) * PLAYER_HORIZONTAL_SPEED
         accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
         if not engine.is_on_ground(self):
             accel *= PLAYER_AIR_ACCEL_FACTOR
