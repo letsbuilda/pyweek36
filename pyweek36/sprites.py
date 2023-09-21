@@ -27,10 +27,14 @@ class PlayerSprite(arcade.Sprite):
 
         # Load textures
         main_path = ASSETS_DIR / "sprites" / "player" / "player"
-        self.idle_texture_pair = arcade.load_texture_pair(f"{main_path}_idle.png", "Detailed")
+        self.idle_texture_pair = arcade.load_texture_pair(
+            f"{main_path}_idle.png", "Detailed"
+        )
         self.jump_texture_pair = arcade.load_texture_pair(f"{main_path}_jump.png")
         self.fall_texture_pair = arcade.load_texture_pair(f"{main_path}_fall.png")
-        self.walk_textures = [arcade.load_texture_pair(f"{main_path}_walk{i}.png") for i in range(8)]
+        self.walk_textures = [
+            arcade.load_texture_pair(f"{main_path}_walk{i}.png") for i in range(8)
+        ]
         self.texture = self.idle_texture_pair[0]
 
         self.hit_box = self.texture.hit_box_points
