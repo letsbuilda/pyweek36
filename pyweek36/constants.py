@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import arcade
+
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
 
 SCREEN_TITLE = "PyMunk Platformer"
@@ -70,3 +72,10 @@ BULLET_MASS = 0.1
 
 # Make bullet less affected by gravity
 BULLET_GRAVITY = 300
+
+# How fast the dark matter spreads in seconds, give or take a margin percentage
+DARKMATTER_DECAY_RATE = 1.0
+DARKMATTER_DECAY_RATE_MARGIN = 0.2
+DARKMATTER_TEXTURE = arcade.load_texture(
+    ASSETS_DIR / "sprites" / "map" / "dark_matter.png"
+)
