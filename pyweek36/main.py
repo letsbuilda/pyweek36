@@ -181,10 +181,7 @@ class GameWindow(arcade.Window):
                 adjacent_solid_blocks = [
                     b for b in adjacent_blocks if b.properties["type"] == "solid"
                 ]
-                if (
-                    len(adjacent_solid_blocks) > 0
-                    and perf_counter() > self.next_spread
-                ):
+                if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
                     new_block.texture = DARKMATTER_TEXTURE
