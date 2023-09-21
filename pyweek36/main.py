@@ -3,10 +3,12 @@ Example of Pymunk Physics Engine Platformer
 """
 
 import math
+from random import choice, random
+from time import perf_counter
 from typing import Optional
 
 import arcade
-from arcade import SpriteList, PymunkPhysicsEngine
+from arcade import PymunkPhysicsEngine, SpriteList
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -20,9 +22,12 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title)
 
+        self.next_spread = None
         self.player_sprite: PlayerSprite = PlayerSprite()
         self.block_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
+
+        self.last_spread: Optional[float] = None
 
         # Track the current state of what key is pressed
         self.left_pressed: bool = False
@@ -31,6 +36,26 @@ class GameWindow(arcade.Window):
         self.down_pressed: bool = False
 
         self.physics_engine: PymunkPhysicsEngine | None = None
+
+    def find_adjacent_blocks(self, block):
+        """Returns a list of blocks adjacent to the given block"""
+        adjacent_blocks = []
+        for other_block in self.block_list:
+            if block == other_block:
+                continue
+
+            if (
+                block.right == other_block.left
+                and block.center_y == other_block.center_y
+                or block.left == other_block.right
+                and block.center_y == other_block.center_y
+                or block.top == other_block.bottom
+                and block.center_x == other_block.center_x
+                or block.bottom == other_block.top
+                and block.center_x == other_block.center_x
+            ):
+                adjacent_blocks.append(other_block)
+        return adjacent_blocks
 
     def load_tilemap(self, map_name):
         tile_map = arcade.tilemap.TileMap(
@@ -63,6 +88,7 @@ class GameWindow(arcade.Window):
 
         # Walls
         self.block_list = tile_map.sprite_lists["Map"]
+
         self.physics_engine.add_sprite_list(
             self.block_list,
             friction=WALL_FRICTION,
@@ -87,6 +113,12 @@ class GameWindow(arcade.Window):
         arcade.set_background_color(arcade.color.AMAZON)
 
         self.load_tilemap("map.tmx")
+
+        self.last_spread = perf_counter()
+        # Set the next spread time to be DARKMATTER_DECAY_RATE +/- DARKMATTER_DECAY_RATE_MARGIN
+        self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
+            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+        )
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -160,6 +192,26 @@ class GameWindow(arcade.Window):
             x_force *= x_movement
             self.physics_engine.apply_force(self.player_sprite, (x_force, 0))
             self.physics_engine.set_friction(self.player_sprite, 0)
+
+            # Check if it's time to spread dark matter
+            for block in self.block_list:
+                spreadable_blocks = ["darkmatter", "source"]
+                if block.properties["type"] in spreadable_blocks:
+                    adjacent_blocks = self.find_adjacent_blocks(block)
+                    adjacent_solid_blocks = [
+                        b for b in adjacent_blocks if b.properties["type"] == "solid"
+                    ]
+                    if (
+                        len(adjacent_solid_blocks) > 0
+                        and perf_counter() > self.next_spread
+                    ):
+                        new_block = choice(adjacent_solid_blocks)
+                        new_block.properties["type"] = "darkmatter"
+                        new_block.texture = DARKMATTER_TEXTURE
+                        self.last_spread = perf_counter()
+                        self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
+                            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                        )
 
         # Move items in the physics engine
         self.physics_engine.step()
