@@ -53,7 +53,10 @@ class PlayerSprite(arcade.Sprite):
         if (self.game.is_buffered(InputType.UP)
                 and self.last_on_ground + COYOTE_DURATION > self.game.global_time):
             self.game.consume_buffer(InputType.UP)
-            engine.apply_impulse(self, (0, PLAYER_JUMP_IMPULSE))
+            impulse_amount = PLAYER_JUMP_IMPULSE
+            if not on_ground:
+                impulse_amount -= self.velocity[1] * PLAYER_MASS
+            engine.apply_impulse(self, (0, impulse_amount))
             self.last_on_ground = -1
 
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
