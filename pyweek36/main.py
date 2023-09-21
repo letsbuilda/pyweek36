@@ -3,7 +3,6 @@ Example of Pymunk Physics Engine Platformer
 """
 
 import math
-from typing import Optional
 
 import arcade
 from arcade import SpriteList, PymunkPhysicsEngine
@@ -20,11 +19,13 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title)
 
-        self.player_sprite: PlayerSprite = PlayerSprite()
+        self.player_sprite: PlayerSprite = PlayerSprite(self)
         self.block_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
 
-        # Track the current state of what key is pressed
+        self.global_time: float = 0
+        self.last_pressed: dict[int, float] = {}
+        self.last_released: dict[int, float] = {}
         self.left_pressed: bool = False
         self.right_pressed: bool = False
         self.up_pressed: bool = False
@@ -148,18 +149,8 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """Movement and game logic"""
 
-        is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
-        # Update player
-        self.physics_engine.set_friction(self.player_sprite, PLAYER_FRICTION)
-        x_movement = self.right_pressed - self.left_pressed
-        if x_movement:
-            if is_on_ground:
-                x_force = PLAYER_MOVE_FORCE_ON_GROUND
-            else:
-                x_force = PLAYER_MOVE_FORCE_IN_AIR
-            x_force *= x_movement
-            self.physics_engine.apply_force(self.player_sprite, (x_force, 0))
-            self.physics_engine.set_friction(self.player_sprite, 0)
+        self.global_time += delta_time
+        self.player_sprite.on_update(delta_time)
 
         # Move items in the physics engine
         self.physics_engine.step()
