@@ -8,7 +8,7 @@ from time import perf_counter
 from typing import Optional
 
 import arcade
-from arcade import PymunkPhysicsEngine, SpriteList
+from arcade import PymunkPhysicsEngine, SpriteList, Camera
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -20,7 +20,7 @@ class GameWindow(arcade.Window):
     def __init__(self, width, height, title):
         """Create the variables"""
 
-        super().__init__(width, height, title)
+        super().__init__(width, height, title, False, True)
 
         self.next_spread = None
         self.player_sprite: PlayerSprite = PlayerSprite()
@@ -36,6 +36,8 @@ class GameWindow(arcade.Window):
         self.down_pressed: bool = False
 
         self.physics_engine: PymunkPhysicsEngine | None = None
+
+        self.camera: Camera | None = None
 
     def find_adjacent_blocks(self, block):
         """Returns a list of blocks adjacent to the given block"""
@@ -109,6 +111,8 @@ class GameWindow(arcade.Window):
 
     def setup(self):
         """Set up everything with the game"""
+
+        self.camera = Camera(self.width, self.height)
 
         arcade.set_background_color(arcade.color.AMAZON)
 
@@ -216,9 +220,13 @@ class GameWindow(arcade.Window):
         # Move items in the physics engine
         self.physics_engine.step()
 
+        self.camera.move_to((max(self.player_sprite.center_x - self.camera.viewport_width / 2, 0),
+                             max(self.player_sprite.center_y - self.camera.viewport_height / 2, 0)))
+
     def on_draw(self):
         """Draw everything"""
         self.clear()
+        self.camera.use()
         self.block_list.draw()
         self.bullet_list.draw()
         self.player_sprite.draw()
