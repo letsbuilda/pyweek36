@@ -3,7 +3,7 @@ Example of Pymunk Physics Engine Platformer
 """
 
 import math
-from random import choice, random
+from random import choice, random, sample
 from time import perf_counter
 from typing import Optional
 
@@ -194,7 +194,7 @@ class GameWindow(arcade.Window):
             self.physics_engine.set_friction(self.player_sprite, 0)
 
             # Check if it's time to spread dark matter
-            for block in self.block_list:
+            for block in sample([*self.block_list], len(self.block_list)):
                 spreadable_blocks = ["darkmatter", "source"]
                 if block.properties["type"] in spreadable_blocks:
                     adjacent_blocks = self.find_adjacent_blocks(block)
