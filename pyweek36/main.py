@@ -103,13 +103,11 @@ class GameWindow(arcade.Window):
             return
         self.pressed_keys.remove(type_)
 
-    def is_buffered(self, key, consume_input=True):
-        if self.last_pressed.get(key, -1) + INPUT_BUFFER_DURATION > self.global_time:
-            if consume_input:
-                self.last_pressed[key] = -1
-            return True
-        else:
-            return False
+    def is_buffered(self, key):
+        return self.last_pressed.get(key, -1) + INPUT_BUFFER_DURATION > self.global_time
+
+    def consume_buffer(self, key):
+        self.last_pressed[key] = -1
 
     def on_mouse_press(self, x, y, button, modifiers):
         """Called whenever the mouse button is clicked."""

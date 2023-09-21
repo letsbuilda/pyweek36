@@ -52,6 +52,7 @@ class PlayerSprite(arcade.Sprite):
 
         if (self.game.is_buffered(InputType.UP)
                 and self.last_on_ground + COYOTE_DURATION > self.game.global_time):
+            self.game.consume_buffer(InputType.UP)
             engine.apply_impulse(self, (0, PLAYER_JUMP_IMPULSE))
             self.last_on_ground = -1
 
