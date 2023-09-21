@@ -21,7 +21,7 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title)
 
-        self.player_sprite: PlayerSprite = PlayerSprite(self)
+        self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
 
@@ -61,6 +61,8 @@ class GameWindow(arcade.Window):
         return adjacent_blocks
 
     def load_tilemap(self, map_name):
+        self.player_sprite = PlayerSprite(self)
+
         tile_map = arcade.tilemap.TileMap(
             ASSETS_DIR / "tiled" / map_name,
             SPRITE_SCALING_TILES,
