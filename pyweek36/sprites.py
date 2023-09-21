@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
 
-    def __init__(self, game: 'GameWindow'):
+    def __init__(self, game: "GameWindow"):
         """Init"""
         # Let parent initialize
         super().__init__(
@@ -54,8 +54,10 @@ class PlayerSprite(arcade.Sprite):
         vel_diff = target_vel - self.velocity[0]
         engine.apply_force(self, (vel_diff * accel, 0))
 
-        if (self.game.is_buffered(InputType.UP)
-                and self.last_on_ground + COYOTE_DURATION > self.game.global_time):
+        if (
+            self.game.is_buffered(InputType.UP)
+            and self.last_on_ground + COYOTE_DURATION > self.game.global_time
+        ):
             self.game.consume_buffer(InputType.UP)
             impulse_amount = PLAYER_JUMP_IMPULSE
             if not on_ground:
