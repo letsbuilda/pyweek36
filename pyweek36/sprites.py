@@ -41,8 +41,8 @@ class PlayerSprite(arcade.Sprite):
         if on_ground:
             self.last_on_ground = self.game.global_time
 
-        right_pressed = InputType.RIGHT in self.game.pressed_keys
-        left_pressed = InputType.LEFT in self.game.pressed_keys
+        right_pressed = InputType.RIGHT in self.game.pressed_inputs
+        left_pressed = InputType.LEFT in self.game.pressed_inputs
         target_vel = (right_pressed - left_pressed) * PLAYER_HORIZONTAL_SPEED
         accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
         if not on_ground:

@@ -25,7 +25,7 @@ class GameWindow(arcade.Window):
 
         self.global_time: float = 0
         self.last_pressed: dict[int, float] = {}
-        self.pressed_keys: set[int] = set()
+        self.pressed_inputs: set[int] = set()
         k = arcade.key
         self.control_map: dict[int, InputType] = (
             dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
@@ -95,13 +95,13 @@ class GameWindow(arcade.Window):
         if (type_ := self.control_map.get(key)) is None:
             return
         self.last_pressed[type_] = self.global_time
-        self.pressed_keys.add(type_)
+        self.pressed_inputs.add(type_)
 
     def on_key_release(self, key, modifiers):
         """Called whenever a key is released."""
         if (type_ := self.control_map.get(key)) is None:
             return
-        self.pressed_keys.remove(type_)
+        self.pressed_inputs.discard(type_)
 
     def is_buffered(self, key):
         return self.last_pressed.get(key, -1) + INPUT_BUFFER_DURATION > self.global_time
