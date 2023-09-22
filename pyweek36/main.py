@@ -199,7 +199,10 @@ class GameWindow(arcade.Window):
         # Move items in the physics engine
         self.physics_engine.step()
 
-        self.camera.move_to((max(self.player_sprite.center_x - self.camera.viewport_width / 2, 0), 0), CAMERA_DAMPING)
+        self.camera.move_to(
+            (max(self.player_sprite.center_x - self.camera.viewport_width / 2, 0), 0),
+            CAMERA_DAMPING,
+        )
 
     def on_draw(self):
         """Draw everything"""
