@@ -67,3 +67,5 @@ DARKMATTER_DECAY_RATE_MARGIN = 0.2
 DARKMATTER_TEXTURE = arcade.load_texture(
     ASSETS_DIR / "sprites" / "map" / "dark_matter.png"
 )
+
+CAMERA_DAMPING = 0.8
