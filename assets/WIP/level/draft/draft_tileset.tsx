@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.10.2" name="draft_tileset" tilewidth="64" tileheight="64" tilecount="17" columns="0">
+<tileset version="1.10" tiledversion="1.10.2" name="draft_tileset" tilewidth="64" tileheight="64" tilecount="19" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="8">
   <image width="64" height="64" source="../../tileset/permanent_blocks/tiles_topleft.png"/>
  </tile>
  <tile id="9">
-  <image width="64" height="64" source="../../tileset/permanent_blocks/tiles3.png"/>
+  <image width="64" height="64" source="../../tileset/permanent_blocks/tiles.png"/>
  </tile>
  <tile id="10">
   <image width="64" height="64" source="../../tileset/permanent_blocks/tiles_topright.png"/>
@@ -20,10 +20,10 @@
   <image width="64" height="64" source="../../tileset/permanent_blocks/tiles_vertical_right.png"/>
  </tile>
  <tile id="16">
-  <image width="64" height="64" source="../../player/slime3.png"/>
+  <image width="64" height="64" source="../../player/base/slime.png"/>
  </tile>
  <tile id="17">
-  <image width="64" height="64" source="../../tileset/permanent_blocks/tiles3_inverted.png"/>
+  <image width="64" height="64" source="../../tileset/permanent_blocks/tiles_inverted.png"/>
  </tile>
  <tile id="18">
   <image width="64" height="64" source="../../tileset/permanent_blocks/tiles_bottomleft.png"/>
@@ -51,5 +51,11 @@
  </tile>
  <tile id="31">
   <image width="64" height="64" source="../../tileset/cave_wall/cave_wall.png"/>
+ </tile>
+ <tile id="34">
+  <image width="64" height="64" source="../../tileset/dark_matter_blocks/dark_matter_block.png"/>
+ </tile>
+ <tile id="35">
+  <image width="64" height="64" source="../../tileset/dark_matter_source/dark_matter_source.gif"/>
  </tile>
 </tileset>
