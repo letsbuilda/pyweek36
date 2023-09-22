@@ -187,6 +187,7 @@ class GameWindow(arcade.Window):
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
                     new_block.texture = DARKMATTER_TEXTURE
+                    self.physics_engine.remove_sprite(new_block)
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
                         1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
@@ -194,6 +195,9 @@ class GameWindow(arcade.Window):
 
         # Move items in the physics engine
         self.physics_engine.step()
+
+        if self.player_sprite.position[1] < 0:
+            self.load_tilemap("map.tmx")
 
     def on_draw(self):
         """Draw everything"""
