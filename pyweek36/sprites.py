@@ -1,3 +1,4 @@
+from itertools import cycle
 from typing import TYPE_CHECKING
 
 import arcade
@@ -48,7 +49,18 @@ class PlayerSprite(arcade.Sprite):
         self.walk_textures = load_texture_pairs(PLAYER_WALK_ANIM_PATH)
         self.texture = self.idle_texture_pair[0]
 
-        self.hit_box = self.texture.hit_box_points
+        self.hit_box = self.anim_textures["idle"][1][0][0].hit_box_points
+
+    def set_texture_type(self, type_: str):
+        if self.current_texture == type_:
+            return
+        self.current_texture = type_
+        self.anim_rate, textures = self.anim_textures[type_]
+        if type_ in LOOPING_TEXTURES:
+            self.anim_texture_iter = cycle(textures)
+        else:
+            self.anim_texture_iter = iter(textures)
+        self.last_changed_texture = -1
 
     def on_update(self, delta_time: float = 1 / 60):
         engine = self.game.physics_engine
