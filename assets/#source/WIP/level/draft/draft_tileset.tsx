@@ -55,7 +55,7 @@
  <tile id="34">
   <image width="64" height="64" source="../../tileset/dark_matter_blocks/dark_matter_block.png"/>
  </tile>
- <tile id="35">
-  <image width="64" height="64" source="../../tileset/dark_matter_source/dark_matter_source.gif"/>
+ <tile id="36">
+  <image width="64" height="64" source="../../tileset/dark_matter_source/dark_matter_source1.png"/>
  </tile>
 </tileset>
