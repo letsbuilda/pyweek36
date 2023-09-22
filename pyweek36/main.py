@@ -186,7 +186,7 @@ class GameWindow(arcade.Window):
                 if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
-                    new_block.texture = DARKMATTER_TEXTURE
+                    new_block.texture = arcade.load_texture(DARKMATTER_TEXTURE_PATH)
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
                         1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
