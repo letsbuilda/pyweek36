@@ -36,7 +36,7 @@ class PlayerSprite(arcade.Sprite):
         # Load textures
         self.idle_texture_pair = load_texture_pairs(PLAYER_IDLE_ANIM_PATH)[0]
         self.jump_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[0]
-        self.fall_texture_pair = self.idle_texture_pair  # temporary placeholder
+        self.fall_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[1]  # temporary placeholder
         self.walk_textures = load_texture_pairs(PLAYER_WALK_ANIM_PATH)
         self.texture = self.idle_texture_pair[0]
 
