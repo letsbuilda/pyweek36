@@ -35,19 +35,13 @@ class PlayerSprite(arcade.Sprite):
 
         self.game = game
         self.facing_direction = RIGHT_FACING
-        self.cur_texture = 0
-        self.x_odometer = 0
-        self.y_odometer = 0
         self.last_on_ground = -1
 
-        # Load textures
-        self.idle_texture_pair = load_texture_pairs(PLAYER_IDLE_ANIM_PATH)[0]
-        self.jump_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[0]
-        self.fall_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[
-            1
-        ]  # temporary placeholder
-        self.walk_textures = load_texture_pairs(PLAYER_WALK_ANIM_PATH)
-        self.texture = self.idle_texture_pair[0]
+        self.current_texture = None
+        self.anim_texture_iter = None
+        self.anim_rate = None
+        self.last_changed_texture = None
+        self.set_texture_type("idle")
 
         self.hit_box = self.anim_textures["idle"][1][0][0].hit_box_points
 
@@ -91,38 +85,34 @@ class PlayerSprite(arcade.Sprite):
             engine.apply_impulse(self, (0, impulse_amount))
             self.last_on_ground = -1
 
+        # Update texture
+        if self.velocity[0] / 60 < -ANIM_DEAD_ZONE:
+            self.facing_direction = LEFT_FACING
+        elif self.velocity[0] / 60 > ANIM_DEAD_ZONE:
+            self.facing_direction = RIGHT_FACING
+        if on_ground:
+            if abs(self.velocity[0]) / 60 < ANIM_DEAD_ZONE:
+                texture_type = "idle"
+            else:
+                texture_type = "walk"
+        else:
+            if self.velocity[1] > 0:
+                texture_type = "jump"
+            else:
+                texture_type = "fall"
+        self.set_texture_type(texture_type)
+        if self.game.global_time > self.last_changed_texture + self.anim_rate:
+            try:
+                next_texture = next(self.anim_texture_iter)
+            except StopIteration:
+                self.last_changed_texture = float('inf')
+            else:
+                self.texture = next_texture[self.facing_direction]
+                self.last_changed_texture = self.game.global_time
+
     def pymunk_moved(self, physics_engine, dx, dy, d_angle):
         """Handle being moved by the pymunk engine"""
-
-        self.x_odometer += dx
-        self.y_odometer += dy
         self.velocity = [dx * 60, dy * 60]
-
-        # Figure out if we need to face left or right
-        if dx < -DEAD_ZONE and self.facing_direction == RIGHT_FACING:
-            self.facing_direction = LEFT_FACING
-        elif dx > DEAD_ZONE and self.facing_direction == LEFT_FACING:
-            self.facing_direction = RIGHT_FACING
-
-        # Jumping animation
-        if not physics_engine.is_on_ground(self):
-            if dy > DEAD_ZONE:
-                self.texture = self.jump_texture_pair[self.facing_direction]
-                return
-            elif dy < -DEAD_ZONE:
-                self.texture = self.fall_texture_pair[self.facing_direction]
-                return
-
-        # Idle animation
-        if abs(dx) <= DEAD_ZONE:
-            self.texture = self.idle_texture_pair[self.facing_direction]
-            return
-
-        # Have we moved far enough to change the texture?
-        if abs(self.x_odometer) > DISTANCE_TO_CHANGE_TEXTURE:
-            self.x_odometer = 0
-            self.cur_texture = (self.cur_texture + 1) % len(self.walk_textures)
-            self.texture = self.walk_textures[self.cur_texture][self.facing_direction]
 
 
 class BulletSprite(arcade.SpriteSolidColor):
