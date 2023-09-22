@@ -5,7 +5,6 @@ Example of Pymunk Physics Engine Platformer
 import math
 from random import choice, random, sample
 from time import perf_counter
-from typing import Optional
 
 import arcade
 from arcade import PymunkPhysicsEngine, SpriteList, Camera
@@ -22,19 +21,23 @@ class GameWindow(arcade.Window):
 
         super().__init__(width, height, title, False, True)
 
-        self.next_spread = None
-        self.player_sprite: PlayerSprite = PlayerSprite()
+        self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
 
-        self.last_spread: Optional[float] = None
-
+        self.next_spread = None
+        self.last_spread: float | None = None
         # Track the current state of what key is pressed
-        self.left_pressed: bool = False
-        self.right_pressed: bool = False
-        self.up_pressed: bool = False
-        self.down_pressed: bool = False
-
+        self.global_time: float = 0
+        self.last_pressed: dict[int, float] = {}
+        self.pressed_inputs: set[int] = set()
+        k = arcade.key
+        self.control_map: dict[int, InputType] = (
+            dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
+            | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
+            | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
+            | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
+        )
         self.physics_engine: PymunkPhysicsEngine | None = None
 
         self.camera: Camera | None = None
@@ -60,6 +63,8 @@ class GameWindow(arcade.Window):
         return adjacent_blocks
 
     def load_tilemap(self, map_name):
+        self.player_sprite = PlayerSprite(self)
+
         tile_map = arcade.tilemap.TileMap(
             ASSETS_DIR / "tiled" / map_name,
             SPRITE_SCALING_TILES,
@@ -73,7 +78,7 @@ class GameWindow(arcade.Window):
 
         # Player sprite
         grid_x = 1
-        grid_y = 1
+        grid_y = 3
         self.player_sprite.position = (
             SPRITE_SIZE * (grid_x + 0.5),
             SPRITE_SIZE * (grid_y + 0.5),
@@ -82,10 +87,9 @@ class GameWindow(arcade.Window):
             self.player_sprite,
             friction=PLAYER_FRICTION,
             mass=PLAYER_MASS,
+            damping=PLAYER_DAMPING,
             moment=arcade.PymunkPhysicsEngine.MOMENT_INF,
             collision_type="player",
-            max_horizontal_velocity=PLAYER_MAX_HORIZONTAL_SPEED,
-            max_vertical_velocity=PLAYER_MAX_VERTICAL_SPEED,
         )
 
         # Walls
@@ -118,7 +122,7 @@ class GameWindow(arcade.Window):
 
         self.load_tilemap("map.tmx")
 
-        self.last_spread = perf_counter()
+        self.last_spread = self.global_time
         # Set the next spread time to be DARKMATTER_DECAY_RATE +/- DARKMATTER_DECAY_RATE_MARGIN
         self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
             1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
@@ -126,34 +130,22 @@ class GameWindow(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
-
-        k = arcade.key
-        if key in (k.LEFT, k.A):
-            self.left_pressed = True
-        elif key in (k.RIGHT, k.D):
-            self.right_pressed = True
-        elif key in (k.UP, k.W, k.SPACE):
-            self.up_pressed = True
-            # find out if player is standing on ground, and not on a ladder
-            if self.physics_engine.is_on_ground(self.player_sprite):
-                # Jump
-                impulse = (0, PLAYER_JUMP_IMPULSE)
-                self.physics_engine.apply_impulse(self.player_sprite, impulse)
-        elif key in (k.DOWN, k.S):
-            self.down_pressed = True
+        if (type_ := self.control_map.get(key)) is None:
+            return
+        self.last_pressed[type_] = self.global_time
+        self.pressed_inputs.add(type_)
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key."""
+        """Called whenever a key is released."""
+        if (type_ := self.control_map.get(key)) is None:
+            return
+        self.pressed_inputs.discard(type_)
 
-        k = arcade.key
-        if key in (k.LEFT, k.A):
-            self.left_pressed = False
-        elif key in (k.RIGHT, k.D):
-            self.right_pressed = False
-        elif key in (k.UP, k.W, k.SPACE):
-            self.up_pressed = False
-        elif key in (k.DOWN, k.S):
-            self.down_pressed = False
+    def is_buffered(self, key):
+        return self.last_pressed.get(key, -1) + INPUT_BUFFER_DURATION > self.global_time
+
+    def consume_buffer(self, key):
+        self.last_pressed[key] = -1
 
     def on_mouse_press(self, x, y, button, modifiers):
         """Called whenever the mouse button is clicked."""
@@ -184,38 +176,25 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """Movement and game logic"""
 
-        is_on_ground = self.physics_engine.is_on_ground(self.player_sprite)
-        # Update player
-        self.physics_engine.set_friction(self.player_sprite, PLAYER_FRICTION)
-        x_movement = self.right_pressed - self.left_pressed
-        if x_movement:
-            if is_on_ground:
-                x_force = PLAYER_MOVE_FORCE_ON_GROUND
-            else:
-                x_force = PLAYER_MOVE_FORCE_IN_AIR
-            x_force *= x_movement
-            self.physics_engine.apply_force(self.player_sprite, (x_force, 0))
-            self.physics_engine.set_friction(self.player_sprite, 0)
+        self.global_time += delta_time
+        self.player_sprite.on_update(delta_time)
 
-            # Check if it's time to spread dark matter
-            for block in sample([*self.block_list], len(self.block_list)):
-                spreadable_blocks = ["darkmatter", "source"]
-                if block.properties["type"] in spreadable_blocks:
-                    adjacent_blocks = self.find_adjacent_blocks(block)
-                    adjacent_solid_blocks = [
-                        b for b in adjacent_blocks if b.properties["type"] == "solid"
-                    ]
-                    if (
-                        len(adjacent_solid_blocks) > 0
-                        and perf_counter() > self.next_spread
-                    ):
-                        new_block = choice(adjacent_solid_blocks)
-                        new_block.properties["type"] = "darkmatter"
-                        new_block.texture = DARKMATTER_TEXTURE
-                        self.last_spread = perf_counter()
-                        self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
-                        )
+        # Check if it's time to spread dark matter
+        for block in sample([*self.block_list], len(self.block_list)):
+            spreadable_blocks = ["darkmatter", "source"]
+            if block.properties["type"] in spreadable_blocks:
+                adjacent_blocks = self.find_adjacent_blocks(block)
+                adjacent_solid_blocks = [
+                    b for b in adjacent_blocks if b.properties["type"] == "solid"
+                ]
+                if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
+                    new_block = choice(adjacent_solid_blocks)
+                    new_block.properties["type"] = "darkmatter"
+                    new_block.texture = DARKMATTER_TEXTURE
+                    self.last_spread = perf_counter()
+                    self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
+                        1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                    )
 
         # Move items in the physics engine
         self.physics_engine.step()
