@@ -8,6 +8,14 @@ if TYPE_CHECKING:
     from .main import GameWindow
 
 
+def load_texture_pairs(dir_path: str) -> list[list[arcade.Texture]]:
+    dir_ = ASSETS_DIR / dir_path
+    textures = []
+    for file in sorted(dir_.iterdir()):
+        textures.append(arcade.load_texture_pair(file))
+    return textures
+
+
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
 
