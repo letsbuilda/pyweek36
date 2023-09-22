@@ -18,6 +18,12 @@ def load_texture_pairs(dir_path: str) -> list[list[arcade.Texture]]:
 
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
+    anim_textures = {
+        "idle": (PLAYER_IDLE_ANIM_RATE, load_texture_pairs(PLAYER_IDLE_ANIM_PATH)),
+        "walk": (PLAYER_WALK_ANIM_RATE, load_texture_pairs(PLAYER_WALK_ANIM_PATH)),
+        "jump": (PLAYER_JUMP_ANIM_RATE, load_texture_pairs(PLAYER_JUMP_ANIM_PATH)),
+        "fall": (0, load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[1:]),
+    }
 
     def __init__(self, game: "GameWindow"):
         """Init"""
