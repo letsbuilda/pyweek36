@@ -8,6 +8,14 @@ if TYPE_CHECKING:
     from .main import GameWindow
 
 
+def load_texture_pairs(dir_path: str) -> list[list[arcade.Texture]]:
+    dir_ = ASSETS_DIR / dir_path
+    textures = []
+    for file in sorted(dir_.iterdir()):
+        textures.append(arcade.load_texture_pair(file))
+    return textures
+
+
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
 
@@ -26,15 +34,12 @@ class PlayerSprite(arcade.Sprite):
         self.last_on_ground = -1
 
         # Load textures
-        main_path = ASSETS_DIR / "sprites" / "player" / "player"
-        self.idle_texture_pair = arcade.load_texture_pair(
-            f"{main_path}_idle.png", "Detailed"
-        )
-        self.jump_texture_pair = arcade.load_texture_pair(f"{main_path}_jump.png")
-        self.fall_texture_pair = arcade.load_texture_pair(f"{main_path}_fall.png")
-        self.walk_textures = [
-            arcade.load_texture_pair(f"{main_path}_walk{i}.png") for i in range(8)
-        ]
+        self.idle_texture_pair = load_texture_pairs(PLAYER_IDLE_ANIM_PATH)[0]
+        self.jump_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[0]
+        self.fall_texture_pair = load_texture_pairs(PLAYER_JUMP_ANIM_PATH)[
+            1
+        ]  # temporary placeholder
+        self.walk_textures = load_texture_pairs(PLAYER_WALK_ANIM_PATH)
         self.texture = self.idle_texture_pair[0]
 
         self.hit_box = self.texture.hit_box_points
@@ -95,7 +100,7 @@ class PlayerSprite(arcade.Sprite):
         # Have we moved far enough to change the texture?
         if abs(self.x_odometer) > DISTANCE_TO_CHANGE_TEXTURE:
             self.x_odometer = 0
-            self.cur_texture = (self.cur_texture + 1) % 8
+            self.cur_texture = (self.cur_texture + 1) % len(self.walk_textures)
             self.texture = self.walk_textures[self.cur_texture][self.facing_direction]
 
 
