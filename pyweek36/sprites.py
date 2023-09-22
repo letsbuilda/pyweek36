@@ -19,6 +19,7 @@ def load_texture_pairs(dir_path: str) -> list[list[arcade.Texture]]:
 
 class PlayerSprite(arcade.Sprite):
     """Player Sprite"""
+
     anim_textures = {
         "idle": (PLAYER_IDLE_ANIM_RATE, load_texture_pairs(PLAYER_IDLE_ANIM_PATH)),
         "walk": (PLAYER_WALK_ANIM_RATE, load_texture_pairs(PLAYER_WALK_ANIM_PATH)),
@@ -105,7 +106,7 @@ class PlayerSprite(arcade.Sprite):
             try:
                 next_texture = next(self.anim_texture_iter)
             except StopIteration:
-                self.last_changed_texture = float('inf')
+                self.last_changed_texture = float("inf")
             else:
                 self.texture = next_texture[self.facing_direction]
                 self.last_changed_texture = self.game.global_time
