@@ -150,7 +150,8 @@ class GameWindow(arcade.Window):
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
-        start_x, start_y = bullet.position = self.player_sprite.position
+        start_x, start_y = self.player_sprite.center_x, self.player_sprite.center_y
+        bullet.center_x, bullet.center_y = start_x, start_y
 
         # NOTE: Add self.view_bottom and self.view_left if scrolling
         angle = math.atan2(y - start_y, x - start_x)
@@ -166,8 +167,10 @@ class GameWindow(arcade.Window):
             elasticity=0.9,
         )
 
+        bullet.time = self.global_time
+
         # Add force to bullet
-        self.physics_engine.apply_force(bullet, (BULLET_MOVE_FORCE, 0))
+        self.physics_engine.set_velocity(bullet, (BULLET_MOVE_FORCE * math.cos(angle), BULLET_MOVE_FORCE * math.sin(angle)))
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -198,6 +201,10 @@ class GameWindow(arcade.Window):
 
         if self.player_sprite.position[1] < 0:
             self.load_tilemap("map.tmx")
+
+        for bullet in self.bullet_list:
+            if self.global_time - bullet.time > BULLET_KILL_TIME:
+                bullet.kill()
 
     def on_draw(self):
         """Draw everything"""

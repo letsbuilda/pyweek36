@@ -57,9 +57,10 @@ LEFT_FACING = 1
 DISTANCE_TO_CHANGE_TEXTURE = 20
 
 # Bullet
-BULLET_MOVE_FORCE = 4500
+BULLET_MOVE_FORCE = 1500
 BULLET_MASS = 0.1
-BULLET_GRAVITY = 300
+BULLET_GRAVITY = 0
+BULLET_KILL_TIME = 1
 
 # How fast the dark matter spreads in seconds, give or take a margin percentage
 DARKMATTER_DECAY_RATE = 1.0

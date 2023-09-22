@@ -106,4 +106,4 @@ class BulletSprite(arcade.SpriteSolidColor):
         """Handle when the sprite is moved by the physics engine."""
         # If the bullet falls below the screen, remove it
         if self.center_y < -100:
-            self.remove_from_sprite_lists()
+            self.kill()
