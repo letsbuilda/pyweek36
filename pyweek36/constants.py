@@ -67,9 +67,12 @@ DARKMATTER_DECAY_RATE_MARGIN = 0.2
 # Assets
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
 DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "sprites/map/dark_matter.png"
+WALL_TEXTURE_PATH = ASSETS_DIR / "sprites/map/solid_block.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
 
 # Load texture now so it isn't loaded from disk every frame
 DARKMATTER_TEXTURE = load_texture(DARKMATTER_TEXTURE_PATH)
+
+WALL_TEXTURE = load_texture(WALL_TEXTURE_PATH)

@@ -103,12 +103,23 @@ class GameWindow(arcade.Window):
         # Bullets
         self.bullet_list.clear()
 
-        def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
+        def wall_hit_handler(bullet_sprite, wall_sprite, _arbiter, _space, _data):
             """Called for bullet/wall collision"""
             bullet_sprite.remove_from_sprite_lists()
 
+            if wall_sprite.properties["type"] == "darkmatter":
+                wall_sprite.properties["type"] = "solid"
+                wall_sprite.texture = WALL_TEXTURE
+
+        def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
+            return not wall_sprite.properties["type"] == "darkmatter"
+
         self.physics_engine.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
+        )
+
+        self.physics_engine.add_collision_handler(
+            "player", "wall", begin_handler=player_wall_handler
         )
 
     def setup(self):
@@ -193,7 +204,6 @@ class GameWindow(arcade.Window):
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
                     new_block.texture = DARKMATTER_TEXTURE
-                    self.physics_engine.remove_sprite(new_block)
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
                         1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
