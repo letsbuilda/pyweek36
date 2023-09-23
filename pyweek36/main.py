@@ -17,6 +17,11 @@ from .sprites import BulletSprite, PlayerSprite
 class GameWindow(arcade.Window):
     """Main Window"""
 
+    textures = {
+        "darkmatter": arcade.load_texture(DARKMATTER_TEXTURE_PATH),
+        "wall": arcade.load_texture(WALL_TEXTURE_PATH),
+    }
+
     def __init__(self, width, height, title):
         """Create the variables"""
 
@@ -110,8 +115,19 @@ class GameWindow(arcade.Window):
             """Called for bullet/wall collision"""
             bullet_sprite.remove_from_sprite_lists()
 
+            if wall_sprite.properties["type"] == "darkmatter":
+                wall_sprite.properties["type"] = "solid"
+                wall_sprite.texture = self.textures["wall"]
+
+        def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
+            return not wall_sprite.properties["type"] == "darkmatter"
+
         self.physics_engine.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
+        )
+
+        self.physics_engine.add_collision_handler(
+            "player", "wall", begin_handler=player_wall_handler
         )
 
     def setup(self):
@@ -157,7 +173,8 @@ class GameWindow(arcade.Window):
         # Position the bullet at the player's current location
         start_x, start_y = bullet.position = self.player_sprite.position
 
-        angle = math.atan2(y - start_y, x - start_x + self.camera.position[0])
+        # NOTE: Add self.view_bottom and self.view_left if scrolling
+        angle = math.atan2(y - start_y, x - start_x)
         bullet.angle = math.degrees(angle)
 
         self.physics_engine.add_sprite(
@@ -169,6 +186,8 @@ class GameWindow(arcade.Window):
             gravity=(0, -BULLET_GRAVITY),
             elasticity=0.9,
         )
+
+        bullet.time = self.global_time
 
         # Add force to bullet
         self.physics_engine.apply_force(bullet, (BULLET_MOVE_FORCE, 0))
@@ -209,6 +228,13 @@ class GameWindow(arcade.Window):
             Vec2(max(camera_x_target, 0), 0),
             CAMERA_DAMPING,
         )
+
+        if self.player_sprite.position[1] < 0:
+            self.load_tilemap("map.tmx")
+
+        for bullet in self.bullet_list:
+            if self.global_time - bullet.time > BULLET_KILL_TIME:
+                bullet.kill()
 
     def on_draw(self):
         """Draw everything"""
