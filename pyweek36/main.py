@@ -36,17 +36,18 @@ class GameWindow(arcade.Window):
         self.pressed_inputs: set[int] = set()
         k = arcade.key
         self.control_map: dict[int, InputType] = (
-                dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
-                | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
-                | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
-                | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
+            dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
+            | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
+            | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
+            | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
         self.dead: int = -1
 
     def spread_dark_matter(self, _time):
         spread_blocks = {
-            block for block in self.block_list
+            block
+            for block in self.block_list
             if block.properties["type"] in SPREADABLE_BLOCKS
         }
         target_locations = {
@@ -65,8 +66,7 @@ class GameWindow(arcade.Window):
                 continue
             elif block.position not in target_locations:
                 continue
-            decay_delay = (SPREAD_MIN_DELAY
-                           + random() * (SPREAD_RATE - SPREAD_MIN_DELAY))
+            decay_delay = SPREAD_MIN_DELAY + random() * (SPREAD_RATE - SPREAD_MIN_DELAY)
             self.spread_queue.append((self.global_time + decay_delay, block))
         self.spread_queue.sort(reverse=True)  # reverse since we pop from end later
 
