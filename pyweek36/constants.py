@@ -1,9 +1,6 @@
 from enum import IntEnum
 from pathlib import Path
 
-import arcade
-
-ASSETS_DIR = Path(__file__).parent.parent / "assets"
 
 SCREEN_TITLE = "PyMunk Platformer"
 
@@ -65,6 +62,10 @@ BULLET_KILL_TIME = 1
 # How fast the dark matter spreads in seconds, give or take a margin percentage
 DARKMATTER_DECAY_RATE = 1.0
 DARKMATTER_DECAY_RATE_MARGIN = 0.2
-DARKMATTER_TEXTURE = arcade.load_texture(
-    ASSETS_DIR / "sprites" / "map" / "dark_matter.png"
-)
+
+# Assets
+ASSETS_DIR = Path(__file__).parent.parent / "assets"
+DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "sprites/map/dark_matter.png"
+PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
+PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
+PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
