@@ -61,8 +61,10 @@ BULLET_GRAVITY = 0
 BULLET_KILL_TIME = 2
 
 # How fast the dark matter spreads in seconds, give or take a margin percentage
-DARKMATTER_DECAY_RATE = 1.0
-DARKMATTER_DECAY_RATE_MARGIN = 0.2
+SPREAD_RATE = 2.5
+SPREAD_MIN_DELAY = 1
+SPREADABLE_BLOCKS = {"darkmatter", "source"}
+SPREAD_TARGETS = {"solid"}
 
 # Assets & animations
 PLAYER_IDLE_ANIM_RATE = 0.2
