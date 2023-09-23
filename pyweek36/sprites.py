@@ -6,7 +6,7 @@ import arcade
 from .constants import *
 
 if TYPE_CHECKING:
-    from .main import GameWindow
+    from .game import GameWindow
 
 
 def load_texture_pairs(dir_path: str) -> list[list[arcade.Texture]]:
