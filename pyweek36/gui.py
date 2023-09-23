@@ -27,14 +27,16 @@ class GameGUI(arcade.Window):
 
         levels = [file.stem for file in LEVEL_DIR.iterdir() if file.suffix == ".tmx"]
 
+        buttons = []
         for level in levels:
             button = arcade.gui.UIFlatButton(text=level, width=200)
             self.v_box.add(button.with_space_around(bottom=20))
+            buttons.append(button)
 
-            @button.event("on_click")
-            def on_click(event):
-                """Start the game"""
-                self.start_game(level)
+        button_press_handler = lambda level: lambda event: self.start_game(level)
+
+        for button, level in zip(buttons, levels):
+            button.on_click = button_press_handler(level)
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(
