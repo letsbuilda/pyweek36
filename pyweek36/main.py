@@ -220,10 +220,13 @@ class GameWindow(arcade.Window):
 
         camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
         x_vel = self.player_sprite.velocity[0]
-        abs_normalized_vel = (math.log2(PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1))
-                              / math.log2(PLAYER_WALK_SPEED))
+        abs_normalized_vel = math.log2(
+            PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
+        ) / math.log2(PLAYER_WALK_SPEED)
         if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
-            camera_x_target += math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
+            camera_x_target += (
+                math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
+            )
         self.camera.move_to(
             Vec2(max(camera_x_target, 0), 0),
             CAMERA_DAMPING,
