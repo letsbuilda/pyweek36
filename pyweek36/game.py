@@ -33,6 +33,8 @@ class GameWindow(arcade.Window):
         self.background_sprite_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
         self.spread_queue = []  # heap to store when to spread each sprite
+        self.spread_rate = SPREAD_RATE
+        self.minimum_spread_delay = SPREAD_MIN_DELAY
 
         self.map_name = None
 
@@ -74,7 +76,9 @@ class GameWindow(arcade.Window):
                 continue
             elif block.position not in target_locations:
                 continue
-            decay_delay = SPREAD_MIN_DELAY + random() * (SPREAD_RATE - SPREAD_MIN_DELAY)
+            decay_delay = self.minimum_spread_delay + random() * (
+                self.spread_rate - self.minimum_spread_delay
+            )
             self.spread_queue.append((self.global_time + decay_delay, block))
         self.spread_queue.sort(reverse=True)  # reverse since we pop from end later
 
@@ -85,6 +89,12 @@ class GameWindow(arcade.Window):
             ASSETS_DIR / "tiled" / "levels" / map_name,
             SPRITE_SCALING_TILES,
             hit_box_algorithm="Detailed",
+        )
+
+        # Get spread rate from map
+        self.spread_rate = float(tile_map.properties.get("Spread Rate", SPREAD_RATE))
+        self.minimum_spread_delay = float(
+            tile_map.properties.get("Minimum Spread Delay", SPREAD_MIN_DELAY)
         )
 
         self.physics_engine = PymunkPhysicsEngine(
@@ -144,7 +154,7 @@ class GameWindow(arcade.Window):
         # Reschedule spreading to reset offset
         self.spread_queue.clear()
         arcade.unschedule(self.spread_dark_matter)
-        arcade.schedule(self.spread_dark_matter, SPREAD_RATE)
+        arcade.schedule(self.spread_dark_matter, self.spread_rate)
 
     def setup(self):
         """Set up everything with the game"""
