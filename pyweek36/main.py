@@ -205,6 +205,14 @@ class GameWindow(arcade.Window):
             _, block = self.spread_queue.pop()
             block.texture = self.textures["darkmatter"]
             block.properties["type"] = "darkmatter"
+            block.remove_from_sprite_lists()
+            self.block_list.append(block)
+            self.physics_engine.add_sprite(
+                block,
+                friction=WALL_FRICTION,
+                collision_type="wall",
+                body_type=arcade.PymunkPhysicsEngine.STATIC,
+            )
 
     def on_update(self, delta_time):
         """Movement and game logic"""
