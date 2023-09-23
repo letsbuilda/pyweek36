@@ -243,9 +243,9 @@ class GameWindow(arcade.Window):
         self.clear()
         if self.global_time - self.dead > DEATH_ANIMATION_TIME:
             self.camera.use()
+            self.background_sprite_list.draw()
             self.block_list.draw()
             self.bullet_list.draw()
-            self.background_sprite_list.draw()
             self.player_sprite.draw()
         else:
             self.textures["death_animation"].draw_scaled(
