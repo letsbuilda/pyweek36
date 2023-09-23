@@ -8,6 +8,7 @@ from time import perf_counter
 
 import arcade
 from arcade import PymunkPhysicsEngine, SpriteList, Camera
+from pyglet.math import Vec2
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -193,14 +194,19 @@ class GameWindow(arcade.Window):
                     new_block.texture = DARKMATTER_TEXTURE
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                        1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
                     )
 
         # Move items in the physics engine
         self.physics_engine.step()
 
+        camera_x_target = (self.player_sprite.center_x
+                           - self.camera.viewport_width / 2)
+        normalized_velocity = (8.7 - math.log2(401 - self.player_sprite.velocity[0])) / 6
+        if normalized_velocity > CAMERA_LOOKAHEAD_THRESHOLD:
+            camera_x_target += normalized_velocity * CAMERA_LOOKAHEAD
         self.camera.move_to(
-            (max(self.player_sprite.center_x + CAMERA_LOOKAHEAD * self.player_sprite.velocity[0] - self.camera.viewport_width / 2, 0), 0),
+            Vec2(max(camera_x_target, 0), 0),
             CAMERA_DAMPING,
         )
 
