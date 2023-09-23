@@ -8,7 +8,6 @@ from time import perf_counter
 
 import arcade
 from arcade import PymunkPhysicsEngine, SpriteList
-from arcade.experimental import Shadertoy
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -39,14 +38,14 @@ class GameWindow(arcade.Window):
         self.pressed_inputs: set[int] = set()
         k = arcade.key
         self.control_map: dict[int, InputType] = (
-            dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
-            | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
-            | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
-            | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
+                dict.fromkeys([k.UP, k.W, k.SPACE], InputType.UP)
+                | dict.fromkeys([k.DOWN, k.S], InputType.DOWN)
+                | dict.fromkeys([k.LEFT, k.A], InputType.LEFT)
+                | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
-        self.shader: Shadertoy = Shadertoy.create_from_file((width, height), ASSETS_DIR / "shader" / "zoom.glsl")
         self.dead: int = 0
+        self.death_animation = None
 
     def find_adjacent_blocks(self, block):
         """Returns a list of blocks adjacent to the given block"""
@@ -56,14 +55,14 @@ class GameWindow(arcade.Window):
                 continue
 
             if (
-                block.right == other_block.left
-                and block.center_y == other_block.center_y
-                or block.left == other_block.right
-                and block.center_y == other_block.center_y
-                or block.top == other_block.bottom
-                and block.center_x == other_block.center_x
-                or block.bottom == other_block.top
-                and block.center_x == other_block.center_x
+                    block.right == other_block.left
+                    and block.center_y == other_block.center_y
+                    or block.left == other_block.right
+                    and block.center_y == other_block.center_y
+                    or block.top == other_block.bottom
+                    and block.center_x == other_block.center_x
+                    or block.bottom == other_block.top
+                    and block.center_x == other_block.center_x
             ):
                 adjacent_blocks.append(other_block)
         return adjacent_blocks
@@ -140,10 +139,10 @@ class GameWindow(arcade.Window):
         self.last_spread = self.global_time
         # Set the next spread time to be DARKMATTER_DECAY_RATE +/- DARKMATTER_DECAY_RATE_MARGIN
         self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
         )
 
-        self.textue = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
+        self.death_animation = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -224,7 +223,7 @@ class GameWindow(arcade.Window):
                     )
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                        1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
                     )
 
         # Move items in the physics engine
@@ -246,7 +245,11 @@ class GameWindow(arcade.Window):
             self.bullet_list.draw()
             self.player_sprite.draw()
         else:
-            self.textue.draw_scaled(self.width/2, self.height/2, DEATH_ANIMATION_SCALE * math.sin((math.pi/4) * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))))
+            self.death_animation.draw_scaled(self.width / 2, self.height / 2,
+                                             DEATH_ANIMATION_SCALE *
+                                             math.sin((math.pi / 4) *
+                                                      (DEATH_ANIMATION_TIME - (
+                                                              self.global_time - self.dead))))
         # self.player_sprite.draw_hit_boxes(color=arcade.color.RED, line_thickness=5)
 
 
