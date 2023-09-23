@@ -1,8 +1,6 @@
 from enum import IntEnum
 from pathlib import Path
 
-from arcade import load_texture
-
 SCREEN_TITLE = "PyMunk Platformer"
 
 # How big are our image tiles?

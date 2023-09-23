@@ -43,27 +43,6 @@ class GameWindow(arcade.Window):
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
         self.dead: int = -1
-        self.death_animation = None
-
-    def find_adjacent_blocks(self, block):
-        """Returns a list of blocks adjacent to the given block"""
-        adjacent_blocks = []
-        for other_block in self.block_list:
-            if block == other_block:
-                continue
-
-            if (
-                    block.right == other_block.left
-                    and block.center_y == other_block.center_y
-                    or block.left == other_block.right
-                    and block.center_y == other_block.center_y
-                    or block.top == other_block.bottom
-                    and block.center_x == other_block.center_x
-                    or block.bottom == other_block.top
-                    and block.center_x == other_block.center_x
-            ):
-                adjacent_blocks.append(other_block)
-        return adjacent_blocks
 
     def spread_dark_matter(self, _time):
         spread_blocks = {
