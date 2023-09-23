@@ -111,11 +111,6 @@ class GameWindow(arcade.Window):
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
-        # Remove dark matter source from physics engine
-        for block in self.block_list:
-            if block.properties["type"] == "source":
-                self.physics_engine.remove_sprite(block)
-
         # Background
         self.background_sprite_list = tile_map.sprite_lists["Background"]
 
@@ -131,7 +126,7 @@ class GameWindow(arcade.Window):
                 wall_sprite.texture = self.textures["wall"]
 
         def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
-            return not wall_sprite.properties["type"] == "darkmatter"
+            return not wall_sprite.properties["type"] in {"darkmatter", "source"}
 
         self.physics_engine.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
