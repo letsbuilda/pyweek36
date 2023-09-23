@@ -191,12 +191,10 @@ class GameWindow(arcade.Window):
             elasticity=0.9,
         )
 
-        bullet.time = self.global_time
-
         # Add force to bullet
         self.physics_engine.set_velocity(
             bullet,
-            (BULLET_MOVE_FORCE * math.cos(angle), BULLET_MOVE_FORCE * math.sin(angle)),
+            (BULLET_VELOCITY * math.cos(angle), BULLET_VELOCITY * math.sin(angle)),
         )
 
     def update_tiles(self):
