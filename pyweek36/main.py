@@ -241,7 +241,7 @@ class GameWindow(arcade.Window):
         self.physics_engine.step()
 
         if self.player_sprite.position[1] < 0:
-            self.load_tilemap("map.tmx")
+            self.load_tilemap("demo.tmx")
             self.dead = self.global_time
 
         for bullet in self.bullet_list:
