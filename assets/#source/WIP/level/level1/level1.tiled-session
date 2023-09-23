@@ -1,0 +1,49 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level1.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "level1.tmx": {
+            "scale": 0.33,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 874.2424242424241,
+                "y": 815.151515151515
+            }
+        },
+        "tileset.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        }
+    },
+    "last.externalTilesetPath": "K:/PYWEEK/pyweek36/assets/#source/WIP/level",
+    "last.imagePath": "K:/PYWEEK/pyweek36/assets/#source/WIP/tileset/cave_wall",
+    "map.height": 17,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 64,
+    "map.tileWidth": 64,
+    "openFiles": [
+        "level1.tmx",
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx"
+    ],
+    "project": "level1.tiled-project",
+    "recentFiles": [
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx",
+        "level1.tmx",
+        "tileset.tsx"
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.type": 1
+}
