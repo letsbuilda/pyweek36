@@ -67,7 +67,7 @@ class PlayerSprite(arcade.Sprite):
         # Horizontal movement
         right_pressed = InputType.RIGHT in self.game.pressed_inputs
         left_pressed = InputType.LEFT in self.game.pressed_inputs
-        target_vel = (right_pressed - left_pressed) * PLAYER_HORIZONTAL_SPEED
+        target_vel = (right_pressed - left_pressed) * PLAYER_WALK_SPEED
         accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
         if not on_ground:
             accel *= PLAYER_AIR_ACCEL_FACTOR
