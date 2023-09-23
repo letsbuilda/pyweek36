@@ -1,8 +1,6 @@
 from enum import IntEnum
 from pathlib import Path
 
-from arcade import load_texture
-
 SCREEN_TITLE = "PyMunk Platformer"
 
 # How big are our image tiles?
@@ -55,14 +53,16 @@ LEFT_FACING = 1
 DISTANCE_TO_CHANGE_TEXTURE = 20
 
 # Bullet
-BULLET_MOVE_FORCE = 2000
+BULLET_VELOCITY = 2000
 BULLET_MASS = 0.1
 BULLET_GRAVITY = 0
 BULLET_KILL_TIME = 2
 
 # How fast the dark matter spreads in seconds, give or take a margin percentage
-DARKMATTER_DECAY_RATE = 1.0
-DARKMATTER_DECAY_RATE_MARGIN = 0.2
+SPREAD_RATE = 2.5
+SPREAD_MIN_DELAY = 1
+SPREADABLE_BLOCKS = {"darkmatter", "source"}
+SPREAD_TARGETS = {"solid"}
 
 # Assets & animations
 PLAYER_IDLE_ANIM_RATE = 0.2
@@ -74,14 +74,14 @@ DEATH_ANIMATION_TIME = 0.5
 DEATH_ANIMATION_SCALE = 50
 
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
-DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "sprites/map/dark_matter.png"
-WALL_TEXTURE_PATH = ASSETS_DIR / "sprites/map/solid_block.png"
+DARKMATTER_TEXTURE_PATH = (
+    ASSETS_DIR / "blocks/dark_matter_blocks/dark_matter_blocks.png"
+)
+WALL_TEXTURE_PATH = ASSETS_DIR / "blocks/permanent_blocks/tiles.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
 LOOPING_TEXTURES = {"idle", "walk"}
-
-DARKMATTER_TEXTURE = load_texture(DARKMATTER_TEXTURE_PATH)
 
 CAMERA_DAMPING = 0.1
 CAMERA_LOOKAHEAD_THRESHOLD = 0.15
