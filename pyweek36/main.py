@@ -16,6 +16,11 @@ from .sprites import BulletSprite, PlayerSprite
 class GameWindow(arcade.Window):
     """Main Window"""
 
+    textures = {
+        "darkmatter": arcade.load_texture(DARKMATTER_TEXTURE_PATH),
+        "wall": arcade.load_texture(WALL_TEXTURE_PATH),
+    }
+
     def __init__(self, width, height, title):
         """Create the variables"""
 
@@ -103,12 +108,23 @@ class GameWindow(arcade.Window):
         # Bullets
         self.bullet_list.clear()
 
-        def wall_hit_handler(bullet_sprite, _wall_sprite, _arbiter, _space, _data):
+        def wall_hit_handler(bullet_sprite, wall_sprite, _arbiter, _space, _data):
             """Called for bullet/wall collision"""
             bullet_sprite.remove_from_sprite_lists()
 
+            if wall_sprite.properties["type"] == "darkmatter":
+                wall_sprite.properties["type"] = "solid"
+                wall_sprite.texture = self.textures["wall"]
+
+        def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
+            return not wall_sprite.properties["type"] == "darkmatter"
+
         self.physics_engine.add_collision_handler(
             "bullet", "wall", post_handler=wall_hit_handler
+        )
+
+        self.physics_engine.add_collision_handler(
+            "player", "wall", begin_handler=player_wall_handler
         )
 
     def setup(self):
@@ -150,7 +166,8 @@ class GameWindow(arcade.Window):
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
-        start_x, start_y = bullet.position = self.player_sprite.position
+        start_x, start_y = self.player_sprite.center_x, self.player_sprite.center_y
+        bullet.center_x, bullet.center_y = start_x, start_y
 
         # NOTE: Add self.view_bottom and self.view_left if scrolling
         angle = math.atan2(y - start_y, x - start_x)
@@ -166,8 +183,13 @@ class GameWindow(arcade.Window):
             elasticity=0.9,
         )
 
+        bullet.time = self.global_time
+
         # Add force to bullet
-        self.physics_engine.apply_force(bullet, (BULLET_MOVE_FORCE, 0))
+        self.physics_engine.set_velocity(
+            bullet,
+            (BULLET_MOVE_FORCE * math.cos(angle), BULLET_MOVE_FORCE * math.sin(angle)),
+        )
 
     def on_update(self, delta_time):
         """Movement and game logic"""
@@ -186,7 +208,15 @@ class GameWindow(arcade.Window):
                 if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
-                    new_block.texture = arcade.load_texture(DARKMATTER_TEXTURE_PATH)
+                    new_block.texture = self.textures["darkmatter"]
+                    new_block.remove_from_sprite_lists()
+                    self.block_list.append(new_block)
+                    self.physics_engine.add_sprite(
+                        new_block,
+                        friction=WALL_FRICTION,
+                        collision_type="wall",
+                        body_type=arcade.PymunkPhysicsEngine.STATIC,
+                    )
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
                         1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
@@ -194,6 +224,13 @@ class GameWindow(arcade.Window):
 
         # Move items in the physics engine
         self.physics_engine.step()
+
+        if self.player_sprite.position[1] < 0:
+            self.load_tilemap("map.tmx")
+
+        for bullet in self.bullet_list:
+            if self.global_time - bullet.time > BULLET_KILL_TIME:
+                bullet.kill()
 
     def on_draw(self):
         """Draw everything"""
