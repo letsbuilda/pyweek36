@@ -187,6 +187,7 @@ class GameWindow(arcade.Window):
         """Called whenever the mouse button is clicked."""
 
         bullet = BulletSprite(20, 5, arcade.color.DARK_YELLOW)
+        bullet.properties["spawn_time"] = self.global_time
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
@@ -239,7 +240,7 @@ class GameWindow(arcade.Window):
             self.dead = self.global_time
 
         for bullet in self.bullet_list:
-            if self.global_time - bullet.time > BULLET_KILL_TIME:
+            if self.global_time - bullet.properties["spawn_time"] > BULLET_KILL_TIME:
                 bullet.kill()
 
     def on_draw(self):
