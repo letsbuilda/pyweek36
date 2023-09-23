@@ -8,7 +8,6 @@ from time import perf_counter
 
 import arcade
 from arcade import PymunkPhysicsEngine, SpriteList
-from arcade.experimental import Shadertoy
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -29,7 +28,11 @@ class GameWindow(arcade.Window):
 
         self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
+        self.background_sprite_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
+
+        self.decay_rate = None
+        self.decay_rate_margin = None
 
         self.next_spread = None
         self.last_spread: float | None = None
@@ -72,9 +75,17 @@ class GameWindow(arcade.Window):
         self.player_sprite = PlayerSprite(self)
 
         tile_map = arcade.tilemap.TileMap(
-            ASSETS_DIR / "tiled" / map_name,
+            ASSETS_DIR / "tiled" / "levels" / map_name,
             SPRITE_SCALING_TILES,
             hit_box_algorithm="Detailed",
+        )
+
+        # Load custom map properties
+        self.decay_rate = float(
+            tile_map.properties.get("Decay Rate", DARKMATTER_DECAY_RATE)
+        )
+        self.decay_rate_margin = float(
+            tile_map.properties.get("Decay Margin", DARKMATTER_DECAY_RATE_MARGIN)
         )
 
         self.physics_engine = PymunkPhysicsEngine(
@@ -82,13 +93,10 @@ class GameWindow(arcade.Window):
             gravity=(0, -GRAVITY),
         )
 
-        # Player sprite
-        grid_x = 1
-        grid_y = 3
-        self.player_sprite.position = (
-            SPRITE_SIZE * (grid_x + 0.5),
-            SPRITE_SIZE * (grid_y + 0.5),
-        )
+        # Load player position from Player layer of map
+        player_layer = tile_map.sprite_lists["Player"]
+        self.player_sprite.position = player_layer[0].position
+
         self.physics_engine.add_sprite(
             self.player_sprite,
             friction=PLAYER_FRICTION,
@@ -107,6 +115,9 @@ class GameWindow(arcade.Window):
             collision_type="wall",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
+
+        # Background
+        self.background_sprite_list = tile_map.sprite_lists["Background"]
 
         # Bullets
         self.bullet_list.clear()
@@ -135,12 +146,12 @@ class GameWindow(arcade.Window):
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        self.load_tilemap("map.tmx")
+        self.load_tilemap("demo.tmx")
 
         self.last_spread = self.global_time
         # Set the next spread time to be DARKMATTER_DECAY_RATE +/- DARKMATTER_DECAY_RATE_MARGIN
-        self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+        self.next_spread = self.last_spread + self.decay_rate * (
+            1 + self.decay_rate_margin * (2 * random() - 1)
         )
 
         self.death_animation = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
@@ -171,8 +182,7 @@ class GameWindow(arcade.Window):
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
-        start_x, start_y = self.player_sprite.center_x, self.player_sprite.center_y
-        bullet.center_x, bullet.center_y = start_x, start_y
+        start_x, start_y = bullet.position = self.player_sprite.position
 
         # NOTE: Add self.view_bottom and self.view_left if scrolling
         angle = math.atan2(y - start_y, x - start_x)
@@ -205,10 +215,10 @@ class GameWindow(arcade.Window):
         # Check if it's time to spread dark matter
         for block in sample([*self.block_list], len(self.block_list)):
             spreadable_blocks = ["darkmatter", "source"]
-            if block.properties["type"] in spreadable_blocks:
+            if block.properties.get("type") in spreadable_blocks:
                 adjacent_blocks = self.find_adjacent_blocks(block)
                 adjacent_solid_blocks = [
-                    b for b in adjacent_blocks if b.properties["type"] == "solid"
+                    b for b in adjacent_blocks if b.properties.get("type") == "solid"
                 ]
                 if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
                     new_block = choice(adjacent_solid_blocks)
@@ -223,15 +233,15 @@ class GameWindow(arcade.Window):
                         body_type=arcade.PymunkPhysicsEngine.STATIC,
                     )
                     self.last_spread = perf_counter()
-                    self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                        1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                    self.next_spread = self.last_spread + self.decay_rate * (
+                        1 + self.decay_rate_margin * (2 * random() - 1)
                     )
 
         # Move items in the physics engine
         self.physics_engine.step()
 
         if self.player_sprite.position[1] < 0:
-            self.load_tilemap("map.tmx")
+            self.load_tilemap("demo.tmx")
             self.dead = self.global_time
 
         for bullet in self.bullet_list:
@@ -244,6 +254,7 @@ class GameWindow(arcade.Window):
         if self.global_time - self.dead > DEATH_ANIMATION_TIME:
             self.block_list.draw()
             self.bullet_list.draw()
+            self.background_sprite_list.draw()
             self.player_sprite.draw()
         else:
             self.death_animation.draw_scaled(
