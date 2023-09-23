@@ -1,6 +1,7 @@
 from enum import IntEnum
 from pathlib import Path
 
+from arcade import load_texture
 
 SCREEN_TITLE = "PyMunk Platformer"
 
@@ -69,3 +70,6 @@ DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "sprites/map/dark_matter.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
+
+# Load texture now so it isn't loaded from disk every frame
+DARKMATTER_TEXTURE = load_texture(DARKMATTER_TEXTURE_PATH)
