@@ -252,8 +252,8 @@ class GameWindow(arcade.Window):
             self.player_sprite.draw()
         else:
             self.textures["death_animation"].draw_scaled(
-                self.width / 2,
-                self.height / 2,
+                self.width / 2 + self.camera.position.x,
+                self.height / 2 + self.camera.position.y,
                 DEATH_ANIMATION_SCALE
                 * math.sin(
                     (math.pi / 4)
