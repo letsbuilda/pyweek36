@@ -16,6 +16,10 @@ class GameGUI(arcade.Window):
         self.v_box = None
         self.manager = None
 
+        # Load music from path
+        self.music = arcade.Sound(MUSIC_PATH)
+        self.music.play(volume=0.5)
+
     def open_level_selector(self):
         """Open level selector"""
         # Clear the window
