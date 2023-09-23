@@ -74,7 +74,9 @@ DEATH_ANIMATION_TIME = 0.5
 DEATH_ANIMATION_SCALE = 50
 
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
-DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "blocks/dark_matter_blocks/dark_matter_blocks.png"
+DARKMATTER_TEXTURE_PATH = (
+    ASSETS_DIR / "blocks/dark_matter_blocks/dark_matter_blocks.png"
+)
 WALL_TEXTURE_PATH = ASSETS_DIR / "blocks/permanent_blocks/tiles.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
