@@ -27,6 +27,7 @@ class GameWindow(arcade.Window):
 
         self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
+        self.background_sprite_list: SpriteList = SpriteList()
         self.bullet_list: SpriteList = SpriteList()
         self.spread_queue = []  # heap to store when to spread each sprite
 
@@ -74,7 +75,7 @@ class GameWindow(arcade.Window):
         self.player_sprite = PlayerSprite(self)
 
         tile_map = arcade.tilemap.TileMap(
-            ASSETS_DIR / "tiled" / map_name,
+            ASSETS_DIR / "tiled" / "levels" / map_name,
             SPRITE_SCALING_TILES,
             hit_box_algorithm="Detailed",
         )
@@ -84,13 +85,10 @@ class GameWindow(arcade.Window):
             gravity=(0, -GRAVITY),
         )
 
-        # Player sprite
-        grid_x = 0
-        grid_y = 2
-        self.player_sprite.position = (
-            SPRITE_SIZE * (grid_x + 0.5),
-            SPRITE_SIZE * (grid_y + 0.5),
-        )
+        # Load player position from Player layer of map
+        player_layer = tile_map.sprite_lists["Player"]
+        self.player_sprite.position = player_layer[0].position
+
         self.physics_engine.add_sprite(
             self.player_sprite,
             friction=PLAYER_FRICTION,
@@ -109,6 +107,9 @@ class GameWindow(arcade.Window):
             collision_type="wall",
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
+
+        # Background
+        self.background_sprite_list = tile_map.sprite_lists["Background"]
 
         # Bullets
         self.bullet_list.clear()
@@ -141,7 +142,7 @@ class GameWindow(arcade.Window):
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        self.load_tilemap("map.tmx")
+        self.load_tilemap("demo.tmx")
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -170,8 +171,7 @@ class GameWindow(arcade.Window):
         self.bullet_list.append(bullet)
 
         # Position the bullet at the player's current location
-        start_x, start_y = self.player_sprite.center_x, self.player_sprite.center_y
-        bullet.center_x, bullet.center_y = start_x, start_y
+        start_x, start_y = bullet.position = self.player_sprite.position
 
         # NOTE: Add self.view_bottom and self.view_left if scrolling
         angle = math.atan2(y - start_y, x - start_x)
@@ -215,7 +215,7 @@ class GameWindow(arcade.Window):
         self.physics_engine.step()
 
         if self.player_sprite.position[1] < 0:
-            self.load_tilemap("map.tmx")
+            self.load_tilemap("demo.tmx")
             self.dead = self.global_time
 
         for bullet in self.bullet_list:
@@ -228,6 +228,7 @@ class GameWindow(arcade.Window):
         if self.global_time - self.dead > DEATH_ANIMATION_TIME:
             self.block_list.draw()
             self.bullet_list.draw()
+            self.background_sprite_list.draw()
             self.player_sprite.draw()
         else:
             self.textures["death_animation"].draw_scaled(
