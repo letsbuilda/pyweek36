@@ -8,6 +8,7 @@ from time import perf_counter
 
 import arcade
 from arcade import PymunkPhysicsEngine, SpriteList
+from arcade.experimental import Shadertoy
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -139,7 +140,7 @@ class GameWindow(arcade.Window):
         self.last_spread = self.global_time
         # Set the next spread time to be DARKMATTER_DECAY_RATE +/- DARKMATTER_DECAY_RATE_MARGIN
         self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
         )
 
         self.death_animation = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
