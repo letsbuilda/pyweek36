@@ -137,6 +137,7 @@ class GameWindow(arcade.Window):
         )
 
         # Reschedule spreading to reset offset
+        self.spread_queue.clear()
         arcade.unschedule(self.spread_dark_matter)
         arcade.schedule(self.spread_dark_matter, SPREAD_RATE)
 
