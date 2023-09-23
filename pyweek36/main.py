@@ -111,6 +111,11 @@ class GameWindow(arcade.Window):
             body_type=arcade.PymunkPhysicsEngine.STATIC,
         )
 
+        # Remove dark matter source from physics engine
+        for block in self.block_list:
+            if block.properties["type"] == "source":
+                self.physics_engine.remove_sprite(block)
+
         # Background
         self.background_sprite_list = tile_map.sprite_lists["Background"]
 
