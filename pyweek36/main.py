@@ -123,6 +123,7 @@ class GameWindow(arcade.Window):
 
             if wall_sprite.properties["type"] == "darkmatter":
                 wall_sprite.properties["type"] = "solid"
+                wall_sprite.properties["health"] = 1
                 wall_sprite.texture = self.textures["wall"]
 
         def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
@@ -206,6 +207,9 @@ class GameWindow(arcade.Window):
         while self.spread_queue and self.spread_queue[-1][0] < self.global_time:
             block: arcade.Sprite
             _, block = self.spread_queue.pop()
+            if block.properties.get("health", 0) > 0:
+                block.properties["health"] -= 1
+                continue
             block.texture = self.textures["darkmatter"]
             block.properties["type"] = "darkmatter"
             block.remove_from_sprite_lists()
