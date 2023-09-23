@@ -3,11 +3,19 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1.tmx",
+    "activeFile": "K:/PYWEEK/pyweek36/assets/#source/WIP/level/level2/level2.tmx",
     "expandedProjectPaths": [
         "."
     ],
     "fileStates": {
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/level2/level2.tmx": {
+            "scale": 0.47846354166666666,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 960.3657540956839,
+                "y": 545.4961084199641
+            }
+        },
         "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx": {
             "dynamicWrapping": false,
             "scaleInDock": 1,
@@ -17,8 +25,8 @@
             "scale": 0.33,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 874.2424242424241,
-                "y": 815.151515151515
+                "x": 871.2121212121212,
+                "y": 812.121212121212
             }
         },
         "tileset.tsx": {
@@ -35,12 +43,14 @@
     "map.tileWidth": 64,
     "openFiles": [
         "level1.tmx",
-        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx"
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx",
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/level2/level2.tmx"
     ],
     "project": "level1.tiled-project",
     "recentFiles": [
-        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx",
         "level1.tmx",
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/tileset.tsx",
+        "K:/PYWEEK/pyweek36/assets/#source/WIP/level/level2/level2.tmx",
         "tileset.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
