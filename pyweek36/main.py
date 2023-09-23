@@ -182,6 +182,9 @@ class GameWindow(arcade.Window):
         angle = math.atan2(y - start_y, x - start_x + self.camera.position[0])
         bullet.angle = math.degrees(angle)
 
+        # Move the bullet forwards a bit to prevent it from colliding with the player
+        bullet.position += Vec2.from_polar(30, angle)
+
         self.physics_engine.add_sprite(
             bullet,
             mass=BULLET_MASS,
