@@ -77,6 +77,7 @@ ASSETS_DIR = Path(__file__).parent.parent / "assets"
 DARKMATTER_TEXTURE_PATH = (
     ASSETS_DIR / "blocks/dark_matter_blocks/dark_matter_blocks.png"
 )
+LEVEL_DIR = ASSETS_DIR / "tiled" / "levels"
 WALL_TEXTURE_PATH = ASSETS_DIR / "blocks/permanent_blocks/tiles.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
