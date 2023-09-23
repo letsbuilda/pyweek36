@@ -1,4 +1,4 @@
-from pyweek36 import game
+from pyweek36 import main
 
 if __name__ == "__main__":
     main.main()
