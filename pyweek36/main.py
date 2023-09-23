@@ -45,7 +45,9 @@ class GameWindow(arcade.Window):
             | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
-        self.shader: Shadertoy = Shadertoy.create_from_file((width, height), ASSETS_DIR / "shader" / "zoom.glsl")
+        self.shader: Shadertoy = Shadertoy.create_from_file(
+            (width, height), ASSETS_DIR / "shader" / "zoom.glsl"
+        )
         self.dead: int = 0
 
     def find_adjacent_blocks(self, block):
@@ -246,7 +248,15 @@ class GameWindow(arcade.Window):
             self.bullet_list.draw()
             self.player_sprite.draw()
         else:
-            self.textue.draw_scaled(self.width/2, self.height/2, DEATH_ANIMATION_SCALE * math.sin((math.pi/4) * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))))
+            self.textue.draw_scaled(
+                self.width / 2,
+                self.height / 2,
+                DEATH_ANIMATION_SCALE
+                * math.sin(
+                    (math.pi / 4)
+                    * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
+                ),
+            )
         # self.player_sprite.draw_hit_boxes(color=arcade.color.RED, line_thickness=5)
 
 
