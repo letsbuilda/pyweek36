@@ -20,6 +20,7 @@ class GameWindow(arcade.Window):
     textures = {
         "darkmatter": arcade.load_texture(DARKMATTER_TEXTURE_PATH),
         "wall": arcade.load_texture(WALL_TEXTURE_PATH),
+        "death_animation": arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png"),
     }
 
     def __init__(self, width, height, title):
@@ -143,8 +144,6 @@ class GameWindow(arcade.Window):
             1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
         )
 
-        self.death_animation = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
-
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         if (type_ := self.control_map.get(key)) is None:
@@ -246,7 +245,7 @@ class GameWindow(arcade.Window):
             self.bullet_list.draw()
             self.player_sprite.draw()
         else:
-            self.death_animation.draw_scaled(
+            self.textures["death_animation"].draw_scaled(
                 self.width / 2,
                 self.height / 2,
                 DEATH_ANIMATION_SCALE
