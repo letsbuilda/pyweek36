@@ -16,6 +16,11 @@ from .sprites import BulletSprite, PlayerSprite
 class GameWindow(arcade.Window):
     """Main Window"""
 
+    textures = {
+        "darkmatter": arcade.load_texture(DARKMATTER_TEXTURE_PATH),
+        "wall": arcade.load_texture(WALL_TEXTURE_PATH),
+    }
+
     def __init__(self, width, height, title):
         """Create the variables"""
 
@@ -109,7 +114,7 @@ class GameWindow(arcade.Window):
 
             if wall_sprite.properties["type"] == "darkmatter":
                 wall_sprite.properties["type"] = "solid"
-                wall_sprite.texture = WALL_TEXTURE
+                wall_sprite.texture = self.textures["wall"]
 
         def player_wall_handler(_player_sprite, wall_sprite, _arbiter, _space, _data):
             return not wall_sprite.properties["type"] == "darkmatter"
@@ -203,7 +208,7 @@ class GameWindow(arcade.Window):
                 if len(adjacent_solid_blocks) > 0 and perf_counter() > self.next_spread:
                     new_block = choice(adjacent_solid_blocks)
                     new_block.properties["type"] = "darkmatter"
-                    new_block.texture = DARKMATTER_TEXTURE
+                    new_block.texture = self.textures["darkmatter"]
                     new_block.remove_from_sprite_lists()
                     self.block_list.append(new_block)
                     self.physics_engine.add_sprite(

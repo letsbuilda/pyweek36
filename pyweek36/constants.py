@@ -78,8 +78,3 @@ PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
 LOOPING_TEXTURES = {"idle", "walk"}
-
-# Load texture now so it isn't loaded from disk every frame
-DARKMATTER_TEXTURE = load_texture(DARKMATTER_TEXTURE_PATH)
-
-WALL_TEXTURE = load_texture(WALL_TEXTURE_PATH)
