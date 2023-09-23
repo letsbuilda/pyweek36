@@ -86,6 +86,10 @@ class PlayerSprite(arcade.Sprite):
             engine.apply_impulse(self, (0, impulse_amount))
             self.last_on_ground = -1
 
+            # Play jump sound
+            sound = arcade.Sound(SOUNDS_DIR / "jump.wav")
+            sound.play(volume=0.5)
+
         # Update texture
         if self.velocity[0] / 60 < -ANIM_DEAD_ZONE:
             self.facing_direction = LEFT_FACING
