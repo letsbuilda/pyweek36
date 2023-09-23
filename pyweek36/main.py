@@ -178,8 +178,7 @@ class GameWindow(arcade.Window):
         # Position the bullet at the player's current location
         start_x, start_y = bullet.position = self.player_sprite.position
 
-        # NOTE: Add self.view_bottom and self.view_left if scrolling
-        angle = math.atan2(y - start_y, x - start_x)
+        angle = math.atan2(y - start_y, x - start_x + self.camera.position[0])
         bullet.angle = math.degrees(angle)
 
         self.physics_engine.add_sprite(
