@@ -200,7 +200,7 @@ class GameWindow(arcade.Window):
         self.physics_engine.step()
 
         self.camera.move_to(
-            (max(self.player_sprite.center_x - self.camera.viewport_width / 2, 0), 0),
+            (max(self.player_sprite.center_x + CAMERA_LOOKAHEAD * self.player_sprite.velocity[0] - self.camera.viewport_width / 2, 0), 0),
             CAMERA_DAMPING,
         )
 
