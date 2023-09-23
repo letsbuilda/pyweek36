@@ -266,6 +266,8 @@ class GameWindow(arcade.Window):
             self.load_tilemap(self.map_name)
             self.dead = self.global_time
 
+            self.player_sprite.stop_movement_sound()
+
             sound = arcade.Sound(SOUNDS_DIR / "fall.wav")
             sound.play(volume=0.5)
 

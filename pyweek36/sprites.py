@@ -38,6 +38,9 @@ class PlayerSprite(arcade.Sprite):
         self.facing_direction = RIGHT_FACING
         self.last_on_ground = -1
 
+        self.movement_sound = arcade.Sound(SOUNDS_DIR / "movement.wav")
+        self.movement_sound_id = None
+
         self.current_texture = None
         self.anim_texture_iter = None
         self.anim_rate = None
@@ -57,6 +60,15 @@ class PlayerSprite(arcade.Sprite):
             self.anim_texture_iter = iter(textures)
         self.last_changed_texture = -1
 
+    def stop_movement_sound(self):
+        if self.movement_sound_id is not None:
+            self.movement_sound.stop(self.movement_sound_id)
+            self.movement_sound_id = None
+
+    def play_movement_sound(self):
+        if self.movement_sound_id is None:
+            self.movement_sound_id = self.movement_sound.play(volume=0.5, loop=True)
+
     def on_update(self, delta_time: float = 1 / 60):
         # Update attributes
         engine = self.game.physics_engine
@@ -71,6 +83,14 @@ class PlayerSprite(arcade.Sprite):
         accel = PLAYER_ACCEL if target_vel else PLAYER_DECEL
         if not on_ground:
             accel *= PLAYER_AIR_ACCEL_FACTOR
+            self.stop_movement_sound()
+        else:
+            # Play movement sound
+            self.play_movement_sound()
+        # Stop movement sound if not moving
+        if target_vel == 0:
+            self.stop_movement_sound()
+
         vel_diff = target_vel - self.velocity[0]
         engine.apply_force(self, (vel_diff * accel, 0))
 
