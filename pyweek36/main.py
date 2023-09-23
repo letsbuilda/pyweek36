@@ -170,7 +170,10 @@ class GameWindow(arcade.Window):
         bullet.time = self.global_time
 
         # Add force to bullet
-        self.physics_engine.set_velocity(bullet, (BULLET_MOVE_FORCE * math.cos(angle), BULLET_MOVE_FORCE * math.sin(angle)))
+        self.physics_engine.set_velocity(
+            bullet,
+            (BULLET_MOVE_FORCE * math.cos(angle), BULLET_MOVE_FORCE * math.sin(angle)),
+        )
 
     def on_update(self, delta_time):
         """Movement and game logic"""
