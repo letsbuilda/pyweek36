@@ -55,22 +55,28 @@ LEFT_FACING = 1
 DISTANCE_TO_CHANGE_TEXTURE = 20
 
 # Bullet
-BULLET_MOVE_FORCE = 1500
+BULLET_MOVE_FORCE = 4500
 BULLET_MASS = 0.1
-BULLET_GRAVITY = 0
-BULLET_KILL_TIME = 1
+BULLET_GRAVITY = 300
 
 # How fast the dark matter spreads in seconds, give or take a margin percentage
 DARKMATTER_DECAY_RATE = 1.0
 DARKMATTER_DECAY_RATE_MARGIN = 0.2
 
-# Assets
+# Assets & animations
+PLAYER_IDLE_ANIM_RATE = 0.2
+PLAYER_WALK_ANIM_RATE = 0.1
+PLAYER_JUMP_ANIM_RATE = 0.1
+ANIM_DEAD_ZONE = 1
+WALK_ANIM_DISTANCE = 20
+
 ASSETS_DIR = Path(__file__).parent.parent / "assets"
 DARKMATTER_TEXTURE_PATH = ASSETS_DIR / "sprites/map/dark_matter.png"
 WALL_TEXTURE_PATH = ASSETS_DIR / "sprites/map/solid_block.png"
 PLAYER_IDLE_ANIM_PATH = ASSETS_DIR / "player/idle"
 PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
+LOOPING_TEXTURES = {"idle", "walk"}
 
 # Load texture now so it isn't loaded from disk every frame
 DARKMATTER_TEXTURE = load_texture(DARKMATTER_TEXTURE_PATH)
