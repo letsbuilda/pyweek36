@@ -36,7 +36,9 @@ class GameGUI(arcade.Window):
         button_press_handler = lambda level: lambda event: self.start_game(level)
 
         for button, level in zip(buttons, levels):
-            button.on_click = button_press_handler(level)
+            button.on_click = (lambda level: lambda event: self.start_game(level))(
+                level
+            )
 
         # Create a widget to hold the v_box widget, that will center the buttons
         self.manager.add(

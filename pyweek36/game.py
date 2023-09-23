@@ -85,8 +85,6 @@ class GameWindow(arcade.Window):
     def load_tilemap(self, map_name):
         self.player_sprite = PlayerSprite(self)
 
-        print(f"Loading map {map_name}")
-
         tile_map = arcade.tilemap.TileMap(
             ASSETS_DIR / "tiled" / "levels" / str(map_name + ".tmx"),
             SPRITE_SCALING_TILES,
