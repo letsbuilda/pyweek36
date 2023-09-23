@@ -45,7 +45,7 @@ class GameWindow(arcade.Window):
             | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
-        self.dead: int = 0
+        self.dead: int = -1
         self.death_animation = None
 
     def find_adjacent_blocks(self, block):
@@ -83,8 +83,8 @@ class GameWindow(arcade.Window):
         )
 
         # Player sprite
-        grid_x = 1
-        grid_y = 3
+        grid_x = 0
+        grid_y = 2
         self.player_sprite.position = (
             SPRITE_SIZE * (grid_x + 0.5),
             SPRITE_SIZE * (grid_y + 0.5),
