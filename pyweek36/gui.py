@@ -25,15 +25,17 @@ class GameGUI(arcade.Window):
         # Create a vertical BoxGroup to align buttons
         self.v_box = arcade.gui.UIBoxLayout()
 
-        levels = [file.stem for file in LEVEL_DIR.iterdir() if file.suffix == ".tmx"]
+        levels = [
+            file.stem
+            for file in LEVEL_DIR.iterdir()
+            if file.suffix == ".tmx" and file.stem not in {"demo", "template"}
+        ]
 
         buttons = []
-        for level in levels:
+        for level in sorted(levels):
             button = arcade.gui.UIFlatButton(text=level, width=200)
             self.v_box.add(button.with_space_around(bottom=20))
             buttons.append(button)
-
-        button_press_handler = lambda level: lambda event: self.start_game(level)
 
         for button, level in zip(buttons, levels):
             button.on_click = (lambda level: lambda event: self.start_game(level))(
