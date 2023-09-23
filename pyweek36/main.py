@@ -90,7 +90,7 @@ class GameWindow(arcade.Window):
 
         # Load player position from Player layer of map
         player_layer = tile_map.sprite_lists["Player"]
-        self.player_sprite.position = player_layer[0].position
+        self.player_sprite.position = Vec2(*player_layer[0].position)
 
         self.physics_engine.add_sprite(
             self.player_sprite,
