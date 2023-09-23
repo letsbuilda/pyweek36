@@ -5,7 +5,8 @@ import math
 from random import random
 
 import arcade
-from arcade import PymunkPhysicsEngine, SpriteList
+from arcade import PymunkPhysicsEngine, SpriteList, Camera
+from pyglet.math import Vec2
 
 from .constants import *
 from .sprites import BulletSprite, PlayerSprite
@@ -23,7 +24,7 @@ class GameWindow(arcade.Window):
     def __init__(self, width, height, title):
         """Create the variables"""
 
-        super().__init__(width, height, title)
+        super().__init__(width, height, title, False)
 
         self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
@@ -44,6 +45,8 @@ class GameWindow(arcade.Window):
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
         self.dead: int = -1
+
+        self.camera: Camera | None = None
 
     def spread_dark_matter(self, _time):
         spread_blocks = {
@@ -140,6 +143,8 @@ class GameWindow(arcade.Window):
     def setup(self):
         """Set up everything with the game"""
 
+        self.camera = Camera(self.width, self.height)
+
         arcade.set_background_color(arcade.color.AMAZON)
 
         self.load_tilemap("demo.tmx")
@@ -214,6 +219,20 @@ class GameWindow(arcade.Window):
         # Move items in the physics engine
         self.physics_engine.step()
 
+        camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
+        x_vel = self.player_sprite.velocity[0]
+        abs_normalized_vel = math.log2(
+            PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
+        ) / math.log2(PLAYER_WALK_SPEED)
+        if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
+            camera_x_target += (
+                math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
+            )
+        self.camera.move_to(
+            Vec2(max(camera_x_target, 0), 0),
+            CAMERA_DAMPING,
+        )
+
         if self.player_sprite.position[1] < 0:
             self.load_tilemap("demo.tmx")
             self.dead = self.global_time
@@ -226,6 +245,7 @@ class GameWindow(arcade.Window):
         """Draw everything"""
         self.clear()
         if self.global_time - self.dead > DEATH_ANIMATION_TIME:
+            self.camera.use()
             self.block_list.draw()
             self.bullet_list.draw()
             self.background_sprite_list.draw()
