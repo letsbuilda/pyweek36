@@ -1,4 +1,4 @@
-"""Runner for the game."""
+"""RunnerZ for the game."""
 
 import arcade
 from .constants import MUSIC_PATH

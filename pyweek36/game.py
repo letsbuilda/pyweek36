@@ -215,6 +215,9 @@ class GameWindow(arcade.Window):
             (BULLET_VELOCITY * math.cos(angle), BULLET_VELOCITY * math.sin(angle)),
         )
 
+        sound = arcade.Sound(SOUNDS_DIR / "bullet.wav")
+        sound.play(volume=0.5)
+
     def update_tiles(self):
         """Spreads scheduled dark matter"""
         while self.spread_queue and self.spread_queue[-1][0] < self.global_time:
@@ -262,6 +265,11 @@ class GameWindow(arcade.Window):
         if self.player_sprite.position[1] < 0:
             self.load_tilemap(self.map_name)
             self.dead = self.global_time
+
+            self.player_sprite.stop_movement_sound()
+
+            sound = arcade.Sound(SOUNDS_DIR / "fall.wav")
+            sound.play(volume=0.5)
 
         for bullet in self.bullet_list:
             if self.global_time - bullet.properties["spawn_time"] > BULLET_KILL_TIME:

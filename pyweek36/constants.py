@@ -84,7 +84,8 @@ PLAYER_JUMP_ANIM_PATH = ASSETS_DIR / "player/jump"
 PLAYER_WALK_ANIM_PATH = ASSETS_DIR / "player/walk"
 LOOPING_TEXTURES = {"idle", "walk"}
 
-MUSIC_PATH = ASSETS_DIR / "sounds" / "music.wav"
+SOUNDS_DIR = ASSETS_DIR / "sounds"
+MUSIC_PATH = SOUNDS_DIR / "music.wav"
 
 CAMERA_DAMPING = 0.1
 CAMERA_LOOKAHEAD_THRESHOLD = 0.15
