@@ -20,7 +20,7 @@ class GameWindow(arcade.Window):
     def __init__(self, width, height, title):
         """Create the variables"""
 
-        super().__init__(width, height, title, False, True)
+        super().__init__(width, height, title, False)
 
         self.player_sprite: PlayerSprite | None = None
         self.block_list: SpriteList = SpriteList()
@@ -193,15 +193,16 @@ class GameWindow(arcade.Window):
                     new_block.texture = DARKMATTER_TEXTURE
                     self.last_spread = perf_counter()
                     self.next_spread = self.last_spread + DARKMATTER_DECAY_RATE * (
-                            1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
+                        1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
                     )
 
         # Move items in the physics engine
         self.physics_engine.step()
 
-        camera_x_target = (self.player_sprite.center_x
-                           - self.camera.viewport_width / 2)
-        normalized_velocity = (8.7 - math.log2(401 - self.player_sprite.velocity[0])) / 6
+        camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
+        normalized_velocity = (
+            8.7 - math.log2(401 - self.player_sprite.velocity[0])
+        ) / 6
         if normalized_velocity > CAMERA_LOOKAHEAD_THRESHOLD:
             camera_x_target += normalized_velocity * CAMERA_LOOKAHEAD
         self.camera.move_to(
