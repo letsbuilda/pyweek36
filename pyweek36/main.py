@@ -45,6 +45,8 @@ class GameWindow(arcade.Window):
             | dict.fromkeys([k.RIGHT, k.D], InputType.RIGHT)
         )
         self.physics_engine: PymunkPhysicsEngine | None = None
+        self.dead: int = 0
+        self.death_animation = None
 
         self.camera: Camera | None = None
 
@@ -145,6 +147,8 @@ class GameWindow(arcade.Window):
             1 + DARKMATTER_DECAY_RATE_MARGIN * (2 * random() - 1)
         )
 
+        self.death_animation = arcade.load_texture(PLAYER_IDLE_ANIM_PATH / "idle01.png")
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
         if (type_ := self.control_map.get(key)) is None:
@@ -234,6 +238,7 @@ class GameWindow(arcade.Window):
 
         if self.player_sprite.position[1] < 0:
             self.load_tilemap("map.tmx")
+            self.dead = self.global_time
 
         for bullet in self.bullet_list:
             if self.global_time - bullet.time > BULLET_KILL_TIME:
@@ -242,10 +247,21 @@ class GameWindow(arcade.Window):
     def on_draw(self):
         """Draw everything"""
         self.clear()
-        self.camera.use()
-        self.block_list.draw()
-        self.bullet_list.draw()
-        self.player_sprite.draw()
+        if self.global_time - self.dead > DEATH_ANIMATION_TIME:
+            self.camera.use()
+            self.block_list.draw()
+            self.bullet_list.draw()
+            self.player_sprite.draw()
+        else:
+            self.death_animation.draw_scaled(
+                self.width / 2,
+                self.height / 2,
+                DEATH_ANIMATION_SCALE
+                * math.sin(
+                    (math.pi / 4)
+                    * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
+                ),
+            )
         # self.player_sprite.draw_hit_boxes(color=arcade.color.RED, line_thickness=5)
 
 
