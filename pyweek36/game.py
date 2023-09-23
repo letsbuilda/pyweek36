@@ -294,12 +294,15 @@ class GameWindow(arcade.Window):
             self.bullet_list.draw()
             self.player_sprite.draw()
         else:
-            self.textures["death_animation"].draw_scaled(
-                self.width / 2 + self.camera.position.x,
-                self.height / 2 + self.camera.position.y,
-                DEATH_ANIMATION_SCALE
-                * math.sin(
-                    (math.pi / 4)
-                    * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
-                ),
-            )
+            try:
+                self.textures["death_animation"].draw_scaled(
+                    self.width / 2 + self.camera.position.x,
+                    self.height / 2 + self.camera.position.y,
+                    DEATH_ANIMATION_SCALE
+                    * math.sin(
+                        (math.pi / 4)
+                        * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
+                    ),
+                )
+            except:
+                pass
