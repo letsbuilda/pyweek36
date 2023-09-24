@@ -86,7 +86,7 @@ class GameWindow(arcade.Window):
         self.player_sprite = PlayerSprite(self)
 
         tile_map = arcade.tilemap.TileMap(
-            ASSETS_DIR / "tiled" / "levels" / str(map_name + ".tmx"),
+            ASSETS_DIR / "tiled" / "levels" / f"level{map_name}.tmx",
             SPRITE_SCALING_TILES,
             hit_box_algorithm="Detailed",
         )
