@@ -26,14 +26,15 @@ class GameGUI(arcade.Window):
         self.v_box = arcade.gui.UIBoxLayout()
 
         levels = {
-            int(i) if i != "1" else 10: file.stem
-            for i, file in enumerate(LEVEL_DIR.iterdir())
-            if file.suffix == ".tmx" and file.stem not in {"demo", "template"}
+            int(file.stem[-1]): file.stem
+            for file in sorted(LEVEL_DIR.iterdir())
+            if file.suffix == ".tmx"
+            and file.stem not in {"demo", "template", "level10"}
         }
-        levels = sorted(levels.items())
+        levels[10] = "level10"
 
         buttons = []
-        for level, name in levels:
+        for level, name in levels.items():
             button = arcade.gui.UIFlatButton(text=f"Level {level}", width=200)
             self.v_box.add(button.with_space_around(bottom=20))
             buttons.append(button)
