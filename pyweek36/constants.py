@@ -1,7 +1,7 @@
 from enum import IntEnum
 from pathlib import Path
 
-SCREEN_TITLE = "PyMunk Platformer"
+SCREEN_TITLE = "Blobbing Blob"
 
 # How big are our image tiles?
 SPRITE_IMAGE_SIZE = 64
