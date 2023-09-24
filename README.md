@@ -1,20 +1,28 @@
 # Blobbing blob
 
-You are a blob escaping from spreading dark matter.
-Jump from platform to platform while keeping the dark matter at bay as platforms disappear beneath your feet!
+![blob idle](https://i.imgur.com/Fdq9gwO.gif)
 
-## Dependencies
+You're a blob. An innocent little slime in your cave minding your own business.  
+
+The cave is your playground, and it's usually peaceful.  
+
+However, recently the cave was disturbed by an unknown entity. Now you must navigate your way through each room, avoiding blocks smeared by an otherworldy matter!
+
+
+## How to run
+
+### Dependencies
 
 - Python 3.10 or above
-- `arcade`
+- `arcade` (and all of its dependencies)
 
-## How to run (poetry)
+### With poetry
 
 1. `cd` into project directory
 2. `poetry install`
 3. `poetry run python run_game.py`
 
-## How to run (pip)
+### With pip
 
 1. `cd` into project directory
 2. (optional) create a venv
@@ -23,8 +31,9 @@ Jump from platform to platform while keeping the dark matter at bay as platforms
 
 ## Controls
 
-- WASD or arrow keys to move, space also works for jump
+- `WASD` or arrow keys to move, space also works for jump
 - Click to shoot bullets that temporarily convert dark matter back into solid blocks
+- `Q` to exit into level select / main menu
 
 ## Copyright
 
