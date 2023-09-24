@@ -40,7 +40,7 @@ wrapt==1.15.0
 ![control scheme](https://i.imgur.com/8KP36v1.png)
 
 # What the game is about
-A platformer game made in `python-arcade` with `pymunk`
+A platformer game made in `arcade` with `pymunk`
 
 ![blob idle](https://i.imgur.com/Fdq9gwO.gif)
 
