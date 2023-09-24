@@ -48,7 +48,6 @@ You're blob. An innocent little slime in your cave minding your own business.
 
 The cave is your playground, and it's usually peaceful.  
 
-However, recently the cave is disturbed by an unknown entity. Now you must navigate your way through each room, avoiding blocks smeared by an otherworldy matter! 
+However, recently the cave is disturbed by an unknown entity. Now you must navigate your way through each room, avoiding blocks smeared by an otherworldy matter!
 
 # Copyright Attributions
-
