@@ -18,13 +18,13 @@ However, recently the cave was disturbed by an unknown entity. Now you must navi
 
 ### With poetry
 
-1. `cd` into project directory
+1. `cd` into project directory (the one with `run_game.py`)
 2. `poetry install`
 3. `poetry run python run_game.py`
 
 ### With pip
 
-1. `cd` into project directory
+1. `cd` into project directory (the one with `run_game.py`)
 2. (optional) create a venv
 3. `pip install -r requirements.txt`
 4. `python run_game.py`
