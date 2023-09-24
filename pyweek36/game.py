@@ -249,6 +249,17 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """Movement and game logic"""
 
+        # If player is to right of screen, win
+        if self.player_sprite.position[0] > self.width:
+            sound = arcade.Sound(SOUNDS_DIR / "level_complete.wav")
+            sound.play(volume=2)
+            self.player_sprite.stop_movement_sound()
+            self.close()
+            window = self.previous_window()
+            window.setup()
+            window.open_level_selector()
+            arcade.run()
+
         self.global_time += delta_time
 
         self.player_sprite.on_update(delta_time)
@@ -257,19 +268,19 @@ class GameWindow(arcade.Window):
         # Move items in the physics engine
         self.physics_engine.step()
 
-        camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
-        x_vel = self.player_sprite.velocity[0]
-        abs_normalized_vel = math.log2(
-            PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
-        ) / math.log2(PLAYER_WALK_SPEED)
-        if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
-            camera_x_target += (
-                math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
-            )
-        self.camera.move_to(
-            Vec2(max(camera_x_target, 0), 0),
-            CAMERA_DAMPING,
-        )
+        # camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
+        # x_vel = self.player_sprite.velocity[0]
+        # abs_normalized_vel = math.log2(
+        #     PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
+        # ) / math.log2(PLAYER_WALK_SPEED)
+        # if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
+        #     camera_x_target += (
+        #         math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
+        #     )
+        # self.camera.move_to(
+        #     Vec2(max(camera_x_target, 0), 0),
+        #     CAMERA_DAMPING,
+        # )
 
         if self.player_sprite.position[1] < 0:
             self.load_tilemap(self.map_name)
