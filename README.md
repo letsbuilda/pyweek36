@@ -39,4 +39,4 @@ However, recently the cave was disturbed by an unknown entity. Now you must navi
 
 - All sprite textures were made by heko_
 - Background music was made by thespaceinvader100
-- Sounds effects are from YouTube
+- Sounds effects are from YouTube and Freesound
