@@ -36,7 +36,7 @@ class GameWindow(arcade.Window):
         self.spread_rate = SPREAD_RATE
         self.minimum_spread_delay = SPREAD_MIN_DELAY
 
-        self.map_name = None
+        self.map_name = level_name
 
         # Track the current state of what key is pressed
         self.global_time: float = 0
@@ -86,16 +86,16 @@ class GameWindow(arcade.Window):
         self.player_sprite = PlayerSprite(self)
 
         tile_map = arcade.tilemap.TileMap(
-            ASSETS_DIR / "tiled" / "levels" / map_name,
+            ASSETS_DIR / "tiled" / "levels" / f"level{map_name}.tmx",
             SPRITE_SCALING_TILES,
             hit_box_algorithm="Detailed",
         )
 
         # Get spread rate from map
-        self.spread_rate = float(tile_map.properties.get("Spread Rate", SPREAD_RATE))
-        self.minimum_spread_delay = float(
-            tile_map.properties.get("Minimum Spread Delay", SPREAD_MIN_DELAY)
-        )
+        if (spread_rate := tile_map.properties.get("Spread Rate")) != "":
+            self.spread_rate = float(spread_rate)
+        if (spread_min_delay := tile_map.properties.get("Minimum Spread Delay")) != "":
+            self.minimum_spread_delay = float(spread_min_delay)
 
         self.physics_engine = PymunkPhysicsEngine(
             damping=DEFAULT_DAMPING,
@@ -163,7 +163,6 @@ class GameWindow(arcade.Window):
 
         arcade.set_background_color(arcade.color.AMAZON)
 
-        self.map_name = "demo.tmx"
         self.load_tilemap(self.map_name)
 
     def on_key_press(self, key, modifiers):
@@ -250,6 +249,17 @@ class GameWindow(arcade.Window):
     def on_update(self, delta_time):
         """Movement and game logic"""
 
+        # If player is to right of screen, win
+        if self.player_sprite.position[0] > self.width:
+            sound = arcade.Sound(SOUNDS_DIR / "level_complete.wav")
+            sound.play(volume=2)
+            self.player_sprite.stop_movement_sound()
+            self.close()
+            window = self.previous_window()
+            window.setup()
+            window.open_level_selector()
+            arcade.run()
+
         self.global_time += delta_time
 
         self.player_sprite.on_update(delta_time)
@@ -258,19 +268,19 @@ class GameWindow(arcade.Window):
         # Move items in the physics engine
         self.physics_engine.step()
 
-        camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
-        x_vel = self.player_sprite.velocity[0]
-        abs_normalized_vel = math.log2(
-            PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
-        ) / math.log2(PLAYER_WALK_SPEED)
-        if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
-            camera_x_target += (
-                math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
-            )
-        self.camera.move_to(
-            Vec2(max(camera_x_target, 0), 0),
-            CAMERA_DAMPING,
-        )
+        # camera_x_target = self.player_sprite.center_x - self.camera.viewport_width / 2
+        # x_vel = self.player_sprite.velocity[0]
+        # abs_normalized_vel = math.log2(
+        #     PLAYER_WALK_SPEED - min(abs(x_vel), PLAYER_WALK_SPEED - 1)
+        # ) / math.log2(PLAYER_WALK_SPEED)
+        # if abs_normalized_vel > CAMERA_LOOKAHEAD_THRESHOLD:
+        #     camera_x_target += (
+        #         math.copysign(abs_normalized_vel, x_vel) * CAMERA_LOOKAHEAD
+        #     )
+        # self.camera.move_to(
+        #     Vec2(max(camera_x_target, 0), 0),
+        #     CAMERA_DAMPING,
+        # )
 
         if self.player_sprite.position[1] < 0:
             self.load_tilemap(self.map_name)
@@ -295,12 +305,15 @@ class GameWindow(arcade.Window):
             self.bullet_list.draw()
             self.player_sprite.draw()
         else:
-            self.textures["death_animation"].draw_scaled(
-                self.width / 2 + self.camera.position.x,
-                self.height / 2 + self.camera.position.y,
-                DEATH_ANIMATION_SCALE
-                * math.sin(
-                    (math.pi / 4)
-                    * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
-                ),
-            )
+            try:
+                self.textures["death_animation"].draw_scaled(
+                    self.width / 2 + self.camera.position.x,
+                    self.height / 2 + self.camera.position.y,
+                    DEATH_ANIMATION_SCALE
+                    * math.sin(
+                        (math.pi / 4)
+                        * (DEATH_ANIMATION_TIME - (self.global_time - self.dead))
+                    ),
+                )
+            except:
+                pass
